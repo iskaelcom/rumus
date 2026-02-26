@@ -13,7 +13,7 @@ export const formulaSections = [
         name: 'Persegi',
         tagline: 'Empat sisi sama panjang dan empat sudut siku-siku.',
         formulas: [
-          { label: 'Luas', value: 's x s' },
+          { label: 'Luas', value: 's²' },
           { label: 'Keliling', value: '4 x s' },
         ],
         variables: ['s = sisi'],
@@ -43,7 +43,7 @@ export const formulaSections = [
         name: 'Lingkaran',
         tagline: 'Semua titik pada garis tepi berjarak sama dari pusat.',
         formulas: [
-          { label: 'Luas', value: 'π x r x r' },
+          { label: 'Luas', value: 'π x r²' },
           { label: 'Keliling', value: '2 x π x r' },
         ],
         variables: ['r = jari-jari', 'π = 22/7 atau 3,14'],
@@ -93,7 +93,7 @@ export const formulaSections = [
         name: 'Segi Lima Beraturan',
         tagline: 'Memiliki 5 sisi sama panjang dan 5 sudut sama besar.',
         formulas: [
-          { label: 'Luas', value: '1/2 x ap x K (atau (1/4) x √(5(5 + 2√5)) x s x s)' },
+          { label: 'Luas', value: '1/2 x ap x K (atau (1/4) x √(5(5 + 2√5)) x s²)' },
           { label: 'Keliling', value: '5 x s' },
         ],
         variables: [
@@ -108,7 +108,7 @@ export const formulaSections = [
         name: 'Segi Enam Beraturan',
         tagline: 'Memiliki 6 sisi sama panjang dan 6 sudut sama besar.',
         formulas: [
-          { label: 'Luas', value: '1/2 x ap x K (atau (3√3/2) x s x s)' },
+          { label: 'Luas', value: '1/2 x ap x K (atau (3√3/2) x s²)' },
           { label: 'Keliling', value: '6 x s' },
         ],
         variables: [
@@ -123,7 +123,7 @@ export const formulaSections = [
         name: 'Segi-n Beraturan',
         tagline: 'Memiliki n sisi sama panjang dan n sudut sama besar.',
         formulas: [
-          { label: 'Luas', value: '1/2 x ap x K (atau (n x s x s) / (4 x tan(π/n)))' },
+          { label: 'Luas', value: '1/2 x ap x K (atau (n x s²) / (4 x tan(π/n)))' },
           { label: 'Keliling', value: 'n x s' },
         ],
         variables: [
@@ -150,8 +150,8 @@ export const formulaSections = [
         name: 'Kubus',
         tagline: 'Memiliki 6 sisi berbentuk persegi yang sama besar.',
         formulas: [
-          { label: 'Volume', value: 's x s x s' },
-          { label: 'Luas Permukaan', value: '6 x s x s' },
+          { label: 'Volume', value: 's³' },
+          { label: 'Luas Permukaan', value: '6 x s²' },
         ],
         variables: ['s = sisi'],
       },
@@ -200,7 +200,7 @@ export const formulaSections = [
         name: 'Tabung',
         tagline: 'Bangun ruang dengan alas dan tutup lingkaran.',
         formulas: [
-          { label: 'Volume', value: 'π x r x r x t' },
+          { label: 'Volume', value: 'π x r² x t' },
           { label: 'Luas Permukaan', value: '2 x π x r x (r + t)' },
         ],
         variables: ['r = jari-jari', 't = tinggi'],
@@ -210,7 +210,7 @@ export const formulaSections = [
         name: 'Kerucut',
         tagline: 'Alas lingkaran dengan satu titik puncak.',
         formulas: [
-          { label: 'Volume', value: '1/3 x π x r x r x t' },
+          { label: 'Volume', value: '1/3 x π x r² x t' },
           { label: 'Luas Permukaan', value: 'π x r x (r + s)' },
         ],
         variables: ['r = jari-jari', 't = tinggi', 's = garis pelukis'],
@@ -220,10 +220,95 @@ export const formulaSections = [
         name: 'Bola',
         tagline: 'Semua titik pada permukaan berjarak sama dari pusat.',
         formulas: [
-          { label: 'Volume', value: '4/3 x π x r x r x r' },
-          { label: 'Luas Permukaan', value: '4 x π x r x r' },
+          { label: 'Volume', value: '4/3 x π x r³' },
+          { label: 'Luas Permukaan', value: '4 x π x r²' },
         ],
         variables: ['r = jari-jari'],
+      },
+    ],
+  },
+  {
+    id: 'rumus-dasar',
+    title: 'Rumus Dasar',
+    description: 'Rumus matematika umum yang sering dipakai di soal SD.',
+    theme: {
+      primary: '#b45309',
+      soft: '#ffedd5',
+    },
+    items: [
+      {
+        id: 'pythagoras',
+        name: 'Teorema Pythagoras',
+        tagline: 'Dipakai pada segitiga siku-siku untuk mencari sisi yang belum diketahui.',
+        formulas: [
+          { label: 'Rumus Dasar', value: 'a² + b² = c²' },
+          { label: 'Cari c', value: 'c = √(a² + b²)' },
+          { label: 'Cari a atau b', value: '√(c² - sisi lain²)' },
+        ],
+        variables: [
+          'a dan b = sisi siku-siku',
+          'c = sisi miring (hipotenusa)',
+        ],
+      },
+      {
+        id: 'kecepatan-jarak-waktu',
+        name: 'Kecepatan, Jarak, Waktu',
+        tagline: 'Rumus hubungan dasar antara kecepatan, jarak tempuh, dan waktu.',
+        formulas: [
+          { label: 'Jarak', value: 's = v x t' },
+          { label: 'Kecepatan', value: 'v = s / t' },
+          { label: 'Waktu', value: 't = s / v' },
+        ],
+        variables: [
+          's = jarak',
+          'v = kecepatan',
+          't = waktu',
+        ],
+      },
+      {
+        id: 'persen',
+        name: 'Persentase',
+        tagline: 'Menghitung bagian dari keseluruhan dalam satuan persen (%).',
+        formulas: [
+          { label: 'Persentase', value: '(bagian / total) x 100%' },
+          { label: 'Bagian', value: '(persen / 100) x total' },
+          { label: 'Total', value: '(bagian x 100) / persen' },
+        ],
+        variables: [
+          'bagian = nilai sebagian',
+          'total = nilai keseluruhan',
+          'persen = persentase (%)',
+        ],
+      },
+      {
+        id: 'rata-rata',
+        name: 'Rata-Rata',
+        tagline: 'Rumus nilai rata-rata (mean) dari sekumpulan data.',
+        formulas: [
+          { label: 'Rata-rata', value: 'rata-rata = jumlah / banyak data' },
+          { label: 'Jumlah', value: 'jumlah = rata-rata x banyak data' },
+          { label: 'Banyak Data', value: 'banyak data = jumlah / rata-rata' },
+        ],
+        variables: [
+          'jumlah = total semua nilai',
+          'banyak data = jumlah anggota data',
+          'rata-rata = mean',
+        ],
+      },
+      {
+        id: 'skala',
+        name: 'Skala',
+        tagline: 'Membandingkan jarak pada peta/model dengan jarak sebenarnya.',
+        formulas: [
+          { label: 'Skala', value: 'jarak peta / jarak sebenarnya' },
+          { label: 'Jarak Peta', value: 'skala x jarak sebenarnya' },
+          { label: 'Jarak Sebenarnya', value: 'jarak peta / skala' },
+        ],
+        variables: [
+          'skala = rasio perbandingan',
+          'jarak peta = jarak pada gambar/model',
+          'jarak sebenarnya = jarak asli',
+        ],
       },
     ],
   },

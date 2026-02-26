@@ -175,19 +175,19 @@ export default function App() {
         {!isPhone && (
           <View style={styles.heroCard}>
             <Text style={styles.heroEyebrow}>Belajar Matematika SD</Text>
-            <Text style={styles.heroTitle}>Pusat Rumus Bangun Datar & Bangun Ruang</Text>
+            <Text style={styles.heroTitle}>Pusat Rumus Matematika SD</Text>
             <Text style={styles.heroSubtitle}>
-              Pilih kategori di tab, lalu pilih bangun yang ingin dipelajari.
+              Pilih kategori di tab, lalu pilih materi yang ingin dipelajari.
             </Text>
 
             <View style={styles.statsRow}>
               <View style={styles.statPill}>
-                <Text style={styles.statValue}>2</Text>
+                <Text style={styles.statValue}>{formulaSections.length}</Text>
                 <Text style={styles.statLabel}>Kategori</Text>
               </View>
               <View style={styles.statPill}>
                 <Text style={styles.statValue}>{totalShapes}</Text>
-                <Text style={styles.statLabel}>Bangun</Text>
+                <Text style={styles.statLabel}>Materi</Text>
               </View>
             </View>
           </View>

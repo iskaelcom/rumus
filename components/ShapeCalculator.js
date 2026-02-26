@@ -88,6 +88,31 @@ const CALCULATOR_FIELDS = {
     { key: 'kel', label: 'Keliling (K)' },
     { key: 'luas', label: 'Luas (L)' },
   ],
+  pythagoras: [
+    { key: 'a', label: 'a (sisi siku-siku)' },
+    { key: 'b', label: 'b (sisi siku-siku)' },
+    { key: 'c', label: 'c (sisi miring)' },
+  ],
+  'kecepatan-jarak-waktu': [
+    { key: 'v', label: 'v (kecepatan)' },
+    { key: 's', label: 's (jarak)' },
+    { key: 't', label: 't (waktu)' },
+  ],
+  persen: [
+    { key: 'bagian', label: 'Bagian' },
+    { key: 'total', label: 'Total' },
+    { key: 'persen', label: 'Persentase (%)' },
+  ],
+  'rata-rata': [
+    { key: 'jumlah', label: 'Jumlah' },
+    { key: 'n', label: 'Banyak data (n)' },
+    { key: 'rata', label: 'Rata-rata' },
+  ],
+  skala: [
+    { key: 'skala', label: 'Skala' },
+    { key: 'jarakPeta', label: 'Jarak peta' },
+    { key: 'jarakSebenarnya', label: 'Jarak sebenarnya' },
+  ],
   kubus: [
     { key: 's', label: 's (sisi)' },
     { key: 'volume', label: 'Volume (V)' },
@@ -392,6 +417,66 @@ const solveShapeValues = (shapeId, seedValues) => {
       case 'segi-n': {
         if (has('n')) {
           solveRegularPolygon(values, set, values.n);
+        }
+        break;
+      }
+      case 'pythagoras': {
+        if (has('a') && has('b')) {
+          set('c', Math.sqrt(values.a * values.a + values.b * values.b));
+        }
+        if (has('c') && has('a') && values.c >= values.a) {
+          set('b', Math.sqrt(values.c * values.c - values.a * values.a));
+        }
+        if (has('c') && has('b') && values.c >= values.b) {
+          set('a', Math.sqrt(values.c * values.c - values.b * values.b));
+        }
+        break;
+      }
+      case 'kecepatan-jarak-waktu': {
+        if (has('v') && has('t')) {
+          set('s', values.v * values.t);
+        }
+        if (has('s') && has('t') && values.t > 0) {
+          set('v', values.s / values.t);
+        }
+        if (has('s') && has('v') && values.v > 0) {
+          set('t', values.s / values.v);
+        }
+        break;
+      }
+      case 'persen': {
+        if (has('bagian') && has('total') && values.total > 0) {
+          set('persen', (values.bagian / values.total) * 100);
+        }
+        if (has('persen') && has('total')) {
+          set('bagian', (values.persen / 100) * values.total);
+        }
+        if (has('bagian') && has('persen') && values.persen > 0) {
+          set('total', (values.bagian * 100) / values.persen);
+        }
+        break;
+      }
+      case 'rata-rata': {
+        if (has('jumlah') && has('n') && values.n > 0) {
+          set('rata', values.jumlah / values.n);
+        }
+        if (has('rata') && has('n')) {
+          set('jumlah', values.rata * values.n);
+        }
+        if (has('jumlah') && has('rata') && values.rata > 0) {
+          set('n', values.jumlah / values.rata);
+        }
+        break;
+      }
+      case 'skala': {
+        if (has('jarakPeta') && has('jarakSebenarnya') && values.jarakSebenarnya > 0) {
+          set('skala', values.jarakPeta / values.jarakSebenarnya);
+        }
+        if (has('skala') && has('jarakSebenarnya')) {
+          set('jarakPeta', values.skala * values.jarakSebenarnya);
+        }
+        if (has('jarakPeta') && has('skala') && values.skala > 0) {
+          set('jarakSebenarnya', values.jarakPeta / values.skala);
         }
         break;
       }

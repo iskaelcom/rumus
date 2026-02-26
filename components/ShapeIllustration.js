@@ -137,6 +137,49 @@ const buildSvg = (shapeId, stroke) => {
     'segi-lima': buildRegularPolygonShape({ sides: 5, stroke, helperStroke, labelFill }),
     'segi-enam': buildRegularPolygonShape({ sides: 6, stroke, helperStroke, labelFill }),
     'segi-n': buildRegularPolygonShape({ sides: 8, stroke, helperStroke, labelFill, showNSides: true }),
+    pythagoras: `
+      <polygon points='92,142 92,52 226,142' fill='none' stroke='${stroke}' stroke-width='4.2' stroke-linejoin='round' />
+      <rect x='92' y='132' width='10' height='10' fill='none' stroke='${helperStroke}' stroke-width='1.6' />
+      <text x='84' y='98' fill='${labelFill}' font-size='15' font-weight='700'>a</text>
+      <text x='160' y='160' fill='${labelFill}' font-size='15' font-weight='700'>b</text>
+      <text x='158' y='95' fill='${labelFill}' font-size='15' font-weight='700'>c</text>
+      <text x='232' y='145' fill='${labelFill}' font-size='11' font-weight='700'>90°</text>
+    `,
+    'kecepatan-jarak-waktu': `
+      <line x1='160' y1='46' x2='98' y2='132' stroke='${stroke}' stroke-width='3' />
+      <line x1='160' y1='46' x2='222' y2='132' stroke='${stroke}' stroke-width='3' />
+      <line x1='98' y1='132' x2='222' y2='132' stroke='${stroke}' stroke-width='3' />
+      <circle cx='160' cy='46' r='24' fill='#ffffff' stroke='${stroke}' stroke-width='3' />
+      <circle cx='98' cy='132' r='24' fill='#ffffff' stroke='${stroke}' stroke-width='3' />
+      <circle cx='222' cy='132' r='24' fill='#ffffff' stroke='${stroke}' stroke-width='3' />
+      <text x='160' y='52' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>s</text>
+      <text x='98' y='138' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>v</text>
+      <text x='222' y='138' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>t</text>
+    `,
+    persen: `
+      <circle cx='160' cy='92' r='56' fill='#ffffff' stroke='${stroke}' stroke-width='3.8' />
+      <path d='M 160 92 L 160 36 A 56 56 0 0 1 213.3 110.9 Z' fill='#bfdbfe' stroke='${stroke}' stroke-width='2' />
+      <line x1='160' y1='92' x2='160' y2='36' stroke='${helperStroke}' stroke-width='1.6' />
+      <line x1='160' y1='92' x2='213.3' y2='110.9' stroke='${helperStroke}' stroke-width='1.6' />
+      <text x='160' y='98' fill='${labelFill}' text-anchor='middle' font-size='14' font-weight='700'>%</text>
+    `,
+    'rata-rata': `
+      <line x1='78' y1='142' x2='242' y2='142' stroke='${helperStroke}' stroke-width='1.6' />
+      <rect x='90' y='106' width='24' height='36' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
+      <rect x='126' y='84' width='24' height='58' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
+      <rect x='162' y='96' width='24' height='46' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
+      <rect x='198' y='70' width='24' height='72' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
+      <line x1='82' y1='96' x2='238' y2='96' stroke='${stroke}' stroke-width='2.2' stroke-dasharray='6 5' />
+      <text x='243' y='100' fill='${labelFill}' font-size='13' font-weight='700'>rata</text>
+    `,
+    skala: `
+      <rect x='68' y='52' width='86' height='34' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
+      <text x='111' y='73' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>Peta</text>
+      <rect x='166' y='102' width='126' height='42' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
+      <text x='229' y='128' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>Sebenarnya</text>
+      <line x1='154' y1='69' x2='166' y2='114' stroke='${helperStroke}' stroke-width='1.8' />
+      <text x='160' y='98' fill='${labelFill}' text-anchor='middle' font-size='13' font-weight='700'>1 : n</text>
+    `,
     kubus: `
       <rect x='92' y='64' width='84' height='84' fill='none' stroke='${stroke}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' />
       <rect x='136' y='40' width='84' height='84' fill='none' stroke='${stroke}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' />

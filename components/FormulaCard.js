@@ -34,7 +34,7 @@ export default function FormulaCard({ item, section, mobileMode = false, onBack 
         </>
       )}
       <Text style={styles.tagline}>{item.tagline}</Text>
-      <Text style={styles.illustrationTitle}>Ilustrasi Bangun</Text>
+      <Text style={styles.illustrationTitle}>Ilustrasi</Text>
       <ShapeIllustration shapeId={item.id} tintColor={section.theme.primary} />
 
       <View style={styles.formulaGroup}>
