@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
   },
   tabButtonPhone: {
     flex: 0,
-    minWidth: 122,
+    minWidth: 129,
     paddingHorizontal: 14,
   },
   tabText: {
@@ -960,7 +960,8 @@ const styles = StyleSheet.create({
   },
   shapeNameRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'start',
+    justifyContent: 'space-between',
     gap: 6,
   },
   shapeName: {
