@@ -68,15 +68,7 @@ const buildRegularPolygonShape = ({ sides, stroke, helperStroke, labelFill, show
 const buildSvg = (shapeId, stroke) => {
   const helperStroke = '#64748b';
   const labelFill = '#0f172a';
-  const common = `
-    <defs>
-      <linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0%' stop-color='#f8fbff' />
-        <stop offset='100%' stop-color='#eef6ff' />
-      </linearGradient>
-    </defs>
-    <rect x='0' y='0' width='320' height='180' rx='20' fill='url(#bg)' />
-  `;
+  const common = '';
 
   const shapes = {
     persegi: `
@@ -290,6 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#dbe1eb',
+    backgroundColor: 'transparent',
     overflow: 'hidden',
     marginBottom: 16,
   },
@@ -300,7 +293,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 180,
-    backgroundColor: '#f8fafc',
+    backgroundColor: 'transparent',
   },
   imageCompact: {
     height: 56,
@@ -312,5 +305,5 @@ const webImageStyle = {
   height: 180,
   display: 'block',
   objectFit: 'contain',
-  backgroundColor: '#f8fafc',
+  backgroundColor: 'transparent',
 };

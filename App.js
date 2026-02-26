@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
   shapeButton: {
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f8fbff',
     borderRadius: 14,
     padding: 12,
   },
