@@ -10,13 +10,30 @@ const FONT_UI = Platform.select({
   default: 'sans-serif',
 });
 
-export default function FormulaCard({ item, section, mobileMode = false, onBack }) {
+const COPY = {
+  id: {
+    back: 'Kembali',
+    illustration: 'Ilustrasi',
+    calculator: 'Kalkulator',
+    variables: 'Keterangan Variabel',
+  },
+  en: {
+    back: 'Back',
+    illustration: 'Illustration',
+    calculator: 'Calculator',
+    variables: 'Variable Notes',
+  },
+};
+
+export default function FormulaCard({ item, section, locale = 'id', mobileMode = false, onBack }) {
+  const copy = COPY[locale] || COPY.id;
+
   return (
     <View style={styles.card}>
       {mobileMode ? (
         <View style={styles.mobileHead}>
           <Pressable onPress={onBack} style={styles.mobileBackButton}>
-            <Text style={styles.mobileBackText}>Kembali</Text>
+            <Text style={styles.mobileBackText}>{copy.back}</Text>
           </Pressable>
           <Text style={styles.title}>{item.name}</Text>
           <Text style={[styles.sectionText, { color: section.theme.primary }]}>
@@ -34,8 +51,8 @@ export default function FormulaCard({ item, section, mobileMode = false, onBack 
         </>
       )}
       <Text style={styles.tagline}>{item.tagline}</Text>
-      <Text style={styles.illustrationTitle}>Ilustrasi</Text>
-      <ShapeIllustration shapeId={item.id} tintColor={section.theme.primary} />
+      <Text style={styles.illustrationTitle}>{copy.illustration}</Text>
+      <ShapeIllustration shapeId={item.id} tintColor={section.theme.primary} locale={locale} />
 
       <View style={styles.formulaGroup}>
         {item.formulas.map((formula) => (
@@ -48,10 +65,10 @@ export default function FormulaCard({ item, section, mobileMode = false, onBack 
         ))}
       </View>
 
-      <Text style={styles.calculatorTitle}>Kalkulator</Text>
-      <ShapeCalculator shapeId={item.id} accentColor={section.theme.primary} />
+      <Text style={styles.calculatorTitle}>{copy.calculator}</Text>
+      <ShapeCalculator shapeId={item.id} accentColor={section.theme.primary} locale={locale} />
 
-      <Text style={styles.variablesTitle}>Keterangan Variabel</Text>
+      <Text style={styles.variablesTitle}>{copy.variables}</Text>
       <View style={styles.variableWrap}>
         {item.variables.map((variable) => (
           <View key={variable} style={styles.variableChip}>

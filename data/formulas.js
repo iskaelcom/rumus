@@ -1,4 +1,7 @@
-export const formulaSections = [
+export const DEFAULT_LOCALE = 'id';
+export const SUPPORTED_LOCALES = ['id', 'en'];
+
+const formulaSectionsId = [
   {
     id: 'bangun-datar',
     title: 'Bangun Datar',
@@ -384,3 +387,397 @@ export const formulaSections = [
     ],
   },
 ];
+
+const formulaSectionsEn = [
+  {
+    id: 'bangun-datar',
+    title: 'Flat Shapes',
+    description: 'Area and perimeter formulas for 2-dimensional figures.',
+    theme: {
+      primary: '#2563eb',
+      soft: '#e8f0ff',
+    },
+    items: [
+      {
+        id: 'persegi',
+        name: 'Square',
+        tagline: 'Has four equal sides and four right angles.',
+        formulas: [
+          { label: 'Area', value: 's²' },
+          { label: 'Perimeter', value: '4 x s' },
+        ],
+        variables: ['s = side'],
+      },
+      {
+        id: 'persegi-panjang',
+        name: 'Rectangle',
+        tagline: 'Has two pairs of opposite sides with equal lengths.',
+        formulas: [
+          { label: 'Area', value: 'p x l' },
+          { label: 'Perimeter', value: '2 x (p + l)' },
+        ],
+        variables: ['p = length', 'l = width'],
+      },
+      {
+        id: 'segitiga',
+        name: 'Triangle',
+        tagline: 'Has three sides and three vertices.',
+        formulas: [
+          { label: 'Area', value: '1/2 x a x t' },
+          { label: 'Perimeter', value: 's1 + s2 + s3' },
+        ],
+        variables: ['a = base', 't = height'],
+      },
+      {
+        id: 'lingkaran',
+        name: 'Circle',
+        tagline: 'All points on the edge are equally distant from the center.',
+        formulas: [
+          { label: 'Area', value: 'π x r²' },
+          { label: 'Circumference', value: '2 x π x r' },
+        ],
+        variables: ['r = radius', 'π = 22/7 or 3.14'],
+      },
+      {
+        id: 'jajar-genjang',
+        name: 'Parallelogram',
+        tagline: 'Opposite sides are parallel and equal in length.',
+        formulas: [
+          { label: 'Area', value: 'a x t' },
+          { label: 'Perimeter', value: '2 x (a + b)' },
+        ],
+        variables: ['a = base', 't = height', 'b = side'],
+      },
+      {
+        id: 'trapesium',
+        name: 'Trapezoid',
+        tagline: 'Has one pair of parallel sides.',
+        formulas: [
+          { label: 'Area', value: '1/2 x (a + b) x t' },
+          { label: 'Perimeter', value: 'sum of all sides' },
+        ],
+        variables: ['a and b = parallel sides', 't = height'],
+      },
+      {
+        id: 'belah-ketupat',
+        name: 'Rhombus',
+        tagline: 'All sides are equal, and opposite angles are equal.',
+        formulas: [
+          { label: 'Area', value: '1/2 x d1 x d2' },
+          { label: 'Perimeter', value: '4 x s' },
+        ],
+        variables: ['d1 and d2 = diagonals', 's = side'],
+      },
+      {
+        id: 'layang-layang',
+        name: 'Kite',
+        tagline: 'Has two pairs of adjacent equal sides.',
+        formulas: [
+          { label: 'Area', value: '1/2 x d1 x d2' },
+          { label: 'Perimeter', value: '2 x (a + b)' },
+        ],
+        variables: ['d1 and d2 = diagonals', 'a and b = side pairs'],
+      },
+      {
+        id: 'segi-lima',
+        name: 'Regular Pentagon',
+        tagline: 'Has 5 equal sides and 5 equal angles.',
+        formulas: [
+          { label: 'Area', value: '1/2 x ap x K (or (1/4) x √(5(5 + 2√5)) x s²)' },
+          { label: 'Perimeter', value: '5 x s' },
+        ],
+        variables: [
+          's = side',
+          'K = perimeter',
+          'ap = apothem',
+          'apothem = perpendicular distance from center to side',
+        ],
+      },
+      {
+        id: 'segi-enam',
+        name: 'Regular Hexagon',
+        tagline: 'Has 6 equal sides and 6 equal angles.',
+        formulas: [
+          { label: 'Area', value: '1/2 x ap x K (or (3√3/2) x s²)' },
+          { label: 'Perimeter', value: '6 x s' },
+        ],
+        variables: [
+          's = side',
+          'K = perimeter',
+          'ap = apothem',
+          'apothem = perpendicular distance from center to side',
+        ],
+      },
+      {
+        id: 'segi-n',
+        name: 'Regular n-gon',
+        tagline: 'Has n equal sides and n equal angles.',
+        formulas: [
+          { label: 'Area', value: '1/2 x ap x K (or (n x s²) / (4 x tan(π/n)))' },
+          { label: 'Perimeter', value: 'n x s' },
+        ],
+        variables: [
+          'n = number of sides',
+          's = side',
+          'K = perimeter',
+          'ap = apothem',
+          'apothem = perpendicular distance from center to side',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'bangun-ruang',
+    title: 'Solid Shapes',
+    description: 'Volume and surface area formulas for 3-dimensional solids.',
+    theme: {
+      primary: '#0f766e',
+      soft: '#e8fbf8',
+    },
+    items: [
+      {
+        id: 'kubus',
+        name: 'Cube',
+        tagline: 'Has 6 congruent square faces.',
+        formulas: [
+          { label: 'Volume', value: 's³' },
+          { label: 'Surface Area', value: '6 x s²' },
+        ],
+        variables: ['s = side'],
+      },
+      {
+        id: 'balok',
+        name: 'Rectangular Prism',
+        tagline: 'Has 3 pairs of rectangular faces.',
+        formulas: [
+          { label: 'Volume', value: 'p x l x t' },
+          { label: 'Surface Area', value: '2 x (pl + pt + lt)' },
+        ],
+        variables: ['p = length', 'l = width', 't = height'],
+      },
+      {
+        id: 'prisma-segitiga',
+        name: 'Triangular Prism',
+        tagline: 'Has congruent triangular bases.',
+        formulas: [
+          { label: 'Volume', value: 'L<sub>alas</sub> x tp' },
+          { label: 'Surface Area', value: '(2 x L<sub>alas</sub>) + (K<sub>alas</sub> x tp)' },
+        ],
+        variables: [
+          'L<sub>alas</sub> = area of triangular base',
+          'K<sub>alas</sub> = perimeter of triangular base',
+          'tp = prism height',
+          'L<sub>alas</sub> = 1/2 x a x t',
+        ],
+      },
+      {
+        id: 'limas-segiempat',
+        name: 'Square Pyramid',
+        tagline: 'Has a square base and triangular side faces meeting at one apex.',
+        formulas: [
+          { label: 'Volume', value: '1/3 x L<sub>alas</sub> x t' },
+          { label: 'Surface Area', value: 'L<sub>alas</sub> + (1/2 x K<sub>alas</sub> x ts)' },
+        ],
+        variables: [
+          'L<sub>alas</sub> = base area',
+          'K<sub>alas</sub> = base perimeter',
+          'ts = slant height (apothem)',
+          't = pyramid height',
+        ],
+      },
+      {
+        id: 'tabung',
+        name: 'Cylinder',
+        tagline: 'A solid with circular base and top.',
+        formulas: [
+          { label: 'Volume', value: 'π x r² x t' },
+          { label: 'Surface Area', value: '2 x π x r x (r + t)' },
+        ],
+        variables: ['r = radius', 't = height'],
+      },
+      {
+        id: 'kerucut',
+        name: 'Cone',
+        tagline: 'Has a circular base and one apex.',
+        formulas: [
+          { label: 'Volume', value: '1/3 x π x r² x t' },
+          { label: 'Surface Area', value: 'π x r x (r + s)' },
+        ],
+        variables: ['r = radius', 't = height', 's = slant height'],
+      },
+      {
+        id: 'bola',
+        name: 'Sphere',
+        tagline: 'All points on the surface are equally distant from the center.',
+        formulas: [
+          { label: 'Volume', value: '4/3 x π x r³' },
+          { label: 'Surface Area', value: '4 x π x r²' },
+        ],
+        variables: ['r = radius'],
+      },
+    ],
+  },
+  {
+    id: 'rumus-dasar',
+    title: 'Basic Formulas',
+    description: 'Common math formulas often used in elementary school questions.',
+    theme: {
+      primary: '#b45309',
+      soft: '#ffedd5',
+    },
+    items: [
+      {
+        id: 'pythagoras',
+        name: 'Pythagorean Theorem',
+        tagline: 'Used in right triangles to find an unknown side.',
+        formulas: [
+          { label: 'Basic Formula', value: 'a² + b² = c²' },
+          { label: 'Solve c', value: 'c = √(a² + b²)' },
+          { label: 'Solve a or b', value: '√(c² - other side²)' },
+        ],
+        variables: [
+          'a and b = legs',
+          'c = hypotenuse',
+        ],
+      },
+      {
+        id: 'kecepatan-jarak-waktu',
+        name: 'Speed, Distance, Time',
+        tagline: 'Basic relationship between speed, distance, and time.',
+        formulas: [
+          { label: 'Distance', value: 's = v x t' },
+          { label: 'Speed', value: 'v = s / t' },
+          { label: 'Time', value: 't = s / v' },
+        ],
+        variables: [
+          's = distance',
+          'v = speed',
+          't = time',
+        ],
+      },
+      {
+        id: 'persen',
+        name: 'Percentage',
+        tagline: 'Calculates a part of a whole in percent (%).',
+        formulas: [
+          { label: 'Percentage', value: '(part / total) x 100%' },
+          { label: 'Part', value: '(percent / 100) x total' },
+          { label: 'Total', value: '(part x 100) / percent' },
+        ],
+        variables: [
+          'part = partial value',
+          'total = whole value',
+          'percent = percentage (%)',
+        ],
+      },
+      {
+        id: 'rata-rata',
+        name: 'Average',
+        tagline: 'Formula for the average (mean) of a data set.',
+        formulas: [
+          { label: 'Average', value: 'average = sum / number of data' },
+          { label: 'Sum', value: 'sum = average x number of data' },
+          { label: 'Number of Data', value: 'number of data = sum / average' },
+        ],
+        variables: [
+          'sum = total of all values',
+          'number of data = number of data points',
+          'average = mean',
+        ],
+      },
+      {
+        id: 'skala',
+        name: 'Scale',
+        tagline: 'Compares distance on a map/model with actual distance.',
+        formulas: [
+          { label: 'Scale', value: 'map distance / actual distance' },
+          { label: 'Map Distance', value: 'scale x actual distance' },
+          { label: 'Actual Distance', value: 'map distance / scale' },
+        ],
+        variables: [
+          'scale = comparison ratio',
+          'map distance = distance on map/model',
+          'actual distance = real distance',
+        ],
+      },
+      {
+        id: 'fpb-kpk',
+        name: 'GCF and LCM',
+        tagline: 'Finds the greatest common factor and least common multiple.',
+        formulas: [
+          { label: 'GCF', value: 'greatest common factor of a and b' },
+          { label: 'LCM', value: '(a x b) / GCF(a, b)' },
+        ],
+        variables: [
+          'a and b = positive integers',
+          'GCF = greatest common factor',
+          'LCM = least common multiple',
+        ],
+      },
+      {
+        id: 'pecahan',
+        name: 'Basic Fractions',
+        tagline: 'Converts fractions to decimals and percentages, plus equivalent fractions.',
+        formulas: [
+          { label: 'Fraction Value', value: 'numerator / denominator' },
+          { label: 'Percentage', value: '(numerator / denominator) x 100%' },
+          { label: 'Equivalent Fraction', value: '(p x n) / (q x n)' },
+        ],
+        variables: [
+          'numerator = top number',
+          'denominator = bottom number (must not be 0)',
+          'n = same multiplier',
+        ],
+      },
+      {
+        id: 'konversi-satuan',
+        name: 'Length Unit Conversion',
+        tagline: 'Converts values between metric and non-metric length units.',
+        formulas: [
+          { label: 'Unit Ladder', value: 'km - hm - dam - m - dm - cm - mm' },
+          { label: 'Down 1 Step', value: 'x 10' },
+          { label: 'Up 1 Step', value: ': 10' },
+          { label: 'Inch Conversion', value: '1 inch = 2.54 cm' },
+          { label: 'Foot Conversion', value: '1 foot = 12 inches = 0.3048 m' },
+          { label: 'Yard Conversion', value: '1 yard = 3 feet = 0.9144 m' },
+          { label: 'Mile Conversion', value: '1 mile = 1760 yards = 1.609344 km' },
+        ],
+        variables: [
+          'km = kilometer',
+          'hm = hectometer',
+          'dam = decameter',
+          'm = meter',
+          'dm = decimeter',
+          'cm = centimeter',
+          'mm = millimeter',
+          'inch = in',
+          'foot = ft',
+          'yard = yd',
+          'mile = mi',
+        ],
+      },
+      {
+        id: 'debit',
+        name: 'Flow Rate',
+        tagline: 'Relationship between volume, time, and flow speed.',
+        formulas: [
+          { label: 'Flow Rate', value: 'flow rate = volume / time' },
+          { label: 'Volume', value: 'volume = flow rate x time' },
+          { label: 'Time', value: 'time = volume / flow rate' },
+        ],
+        variables: [
+          'flow rate = rate of flow (e.g., liter/second)',
+          'volume = amount of liquid',
+          'time = duration of flow',
+        ],
+      },
+    ],
+  },
+];
+
+export const formulaSectionsByLocale = {
+  id: formulaSectionsId,
+  en: formulaSectionsEn,
+};
+
+export const formulaSections = formulaSectionsByLocale[DEFAULT_LOCALE];

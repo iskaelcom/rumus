@@ -2,6 +2,27 @@ import { Image, Platform, StyleSheet, View } from 'react-native';
 
 const createSvgUri = (svg) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 
+const ILLUSTRATION_COPY = {
+  id: {
+    altPrefix: 'Ilustrasi',
+    nSides: 'n sisi',
+    average: 'rata',
+    map: 'Peta',
+    actual: 'Sebenarnya',
+    numerator: 'pembilang',
+    denominator: 'penyebut',
+  },
+  en: {
+    altPrefix: 'Illustration',
+    nSides: 'n sides',
+    average: 'avg',
+    map: 'Map',
+    actual: 'Actual',
+    numerator: 'numerator',
+    denominator: 'denominator',
+  },
+};
+
 const toRadians = (degree) => (degree * Math.PI) / 180;
 
 const getRegularPolygonPoints = (sides, centerX, centerY, radius, rotationDegree) =>
@@ -10,7 +31,14 @@ const getRegularPolygonPoints = (sides, centerX, centerY, radius, rotationDegree
     return [centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle)];
   });
 
-const buildRegularPolygonShape = ({ sides, stroke, helperStroke, labelFill, showNSides = false }) => {
+const buildRegularPolygonShape = ({
+  sides,
+  stroke,
+  helperStroke,
+  labelFill,
+  showNSides = false,
+  nSidesLabel = 'n sisi',
+}) => {
   const centerX = 160;
   const centerY = 92;
   const radius = 68;
@@ -61,11 +89,11 @@ const buildRegularPolygonShape = ({ sides, stroke, helperStroke, labelFill, show
     <circle cx='${centerX.toFixed(1)}' cy='${centerY.toFixed(1)}' r='3.2' fill='${stroke}' />
     <text x='${apLabelX.toFixed(1)}' y='${apLabelY.toFixed(1)}' fill='${labelFill}' font-size='14' font-weight='700'>ap</text>
     <text x='${sLabelX.toFixed(1)}' y='${sLabelY.toFixed(1)}' fill='${labelFill}' font-size='14' font-weight='700'>s</text>
-    ${showNSides ? `<text x='160' y='18' fill='${labelFill}' text-anchor='middle' font-size='13' font-weight='700'>n sisi</text>` : ''}
+    ${showNSides ? `<text x='160' y='18' fill='${labelFill}' text-anchor='middle' font-size='13' font-weight='700'>${nSidesLabel}</text>` : ''}
   `;
 };
 
-const buildSvg = (shapeId, stroke) => {
+const buildSvg = (shapeId, stroke, copy) => {
   const helperStroke = '#64748b';
   const labelFill = '#0f172a';
   const common = '';
@@ -128,7 +156,14 @@ const buildSvg = (shapeId, stroke) => {
     `,
     'segi-lima': buildRegularPolygonShape({ sides: 5, stroke, helperStroke, labelFill }),
     'segi-enam': buildRegularPolygonShape({ sides: 6, stroke, helperStroke, labelFill }),
-    'segi-n': buildRegularPolygonShape({ sides: 8, stroke, helperStroke, labelFill, showNSides: true }),
+    'segi-n': buildRegularPolygonShape({
+      sides: 8,
+      stroke,
+      helperStroke,
+      labelFill,
+      showNSides: true,
+      nSidesLabel: copy.nSides,
+    }),
     pythagoras: `
       <polygon points='92,142 92,52 226,142' fill='none' stroke='${stroke}' stroke-width='4.2' stroke-linejoin='round' />
       <rect x='92' y='132' width='10' height='10' fill='none' stroke='${helperStroke}' stroke-width='1.6' />
@@ -162,13 +197,13 @@ const buildSvg = (shapeId, stroke) => {
       <rect x='162' y='96' width='24' height='46' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
       <rect x='198' y='70' width='24' height='72' rx='4' fill='#ffffff' stroke='${stroke}' stroke-width='2.6' />
       <line x1='82' y1='96' x2='238' y2='96' stroke='${stroke}' stroke-width='2.2' stroke-dasharray='6 5' />
-      <text x='243' y='100' fill='${labelFill}' font-size='13' font-weight='700'>rata</text>
+      <text x='243' y='100' fill='${labelFill}' font-size='13' font-weight='700'>${copy.average}</text>
     `,
     skala: `
       <rect x='68' y='52' width='86' height='34' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
-      <text x='111' y='73' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>Peta</text>
+      <text x='111' y='73' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>${copy.map}</text>
       <rect x='166' y='102' width='126' height='42' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
-      <text x='229' y='128' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>Sebenarnya</text>
+      <text x='229' y='128' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>${copy.actual}</text>
       <line x1='154' y1='69' x2='166' y2='114' stroke='${helperStroke}' stroke-width='1.8' />
       <text x='160' y='98' fill='${labelFill}' text-anchor='middle' font-size='13' font-weight='700'>1 : n</text>
     `,
@@ -186,8 +221,8 @@ const buildSvg = (shapeId, stroke) => {
     `,
     pecahan: `
       <line x1='104' y1='90' x2='216' y2='90' stroke='${stroke}' stroke-width='3' />
-      <text x='160' y='74' fill='${labelFill}' text-anchor='middle' font-size='16' font-weight='700'>pembilang</text>
-      <text x='160' y='116' fill='${labelFill}' text-anchor='middle' font-size='16' font-weight='700'>penyebut</text>
+      <text x='160' y='74' fill='${labelFill}' text-anchor='middle' font-size='14' font-weight='700'>${copy.numerator}</text>
+      <text x='160' y='116' fill='${labelFill}' text-anchor='middle' font-size='14' font-weight='700'>${copy.denominator}</text>
       <text x='241' y='96' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>= %</text>
     `,
     'konversi-satuan': `
@@ -306,14 +341,15 @@ const buildSvg = (shapeId, stroke) => {
   `;
 };
 
-export default function ShapeIllustration({ shapeId, tintColor, compact = false, style }) {
-  const svgUri = createSvgUri(buildSvg(shapeId, tintColor || '#2563eb'));
+export default function ShapeIllustration({ shapeId, tintColor, locale = 'id', compact = false, style }) {
+  const copy = ILLUSTRATION_COPY[locale] || ILLUSTRATION_COPY.id;
+  const svgUri = createSvgUri(buildSvg(shapeId, tintColor || '#2563eb', copy));
   const webStyle = compact ? { ...webImageStyle, height: 56 } : webImageStyle;
 
   if (Platform.OS === 'web') {
     return (
       <View style={[styles.wrapper, compact && styles.wrapperCompact, style]}>
-        <img alt={`Ilustrasi ${shapeId}`} src={svgUri} style={webStyle} />
+        <img alt={`${copy.altPrefix} ${shapeId}`} src={svgUri} style={webStyle} />
       </View>
     );
   }

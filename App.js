@@ -15,9 +15,51 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import FormulaCard from './components/FormulaCard';
 import ShapeIllustration from './components/ShapeIllustration';
-import { formulaSections } from './data/formulas';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, formulaSectionsByLocale } from './data/formulas';
 
 const STORAGE_KEY = 'rumus:last-selection:v1';
+const DEFAULT_SECTIONS = formulaSectionsByLocale[DEFAULT_LOCALE];
+
+const UI_COPY = {
+  id: {
+    heroEyebrow: 'Belajar Matematika SD',
+    heroTitle: 'Pusat Rumus Matematika SD',
+    heroSubtitle: 'Pilih kategori di tab, lalu pilih materi yang ingin dipelajari.',
+    statCategory: 'Kategori',
+    statItems: 'Materi',
+    language: 'Bahasa',
+    languageId: 'Indonesia',
+    languageEn: 'English',
+    searchPlaceholder: 'Cari bangun atau rumus...',
+    detectedCategory: (title) => `Terdeteksi: ${title}`,
+    noSearchResult: 'Tidak ada hasil pencarian',
+    resultFound: (count) => `${count} hasil ditemukan`,
+    viewFormula: 'Lihat rumus',
+    noResultTitle: 'Tidak ada hasil',
+    noResultBody: 'Coba kata kunci lain, misalnya "luas", "segitiga", atau "volume".',
+    emptyTitle: 'Materi tidak ditemukan',
+    emptyBody: 'Ubah kata kunci pencarian untuk melihat rumus dan gambar.',
+  },
+  en: {
+    heroEyebrow: 'Elementary Math Learning',
+    heroTitle: 'Elementary Math Formula Center',
+    heroSubtitle: 'Pick a category tab, then choose the topic you want to study.',
+    statCategory: 'Categories',
+    statItems: 'Topics',
+    language: 'Language',
+    languageId: 'Indonesia',
+    languageEn: 'English',
+    searchPlaceholder: 'Search shapes or formulas...',
+    detectedCategory: (title) => `Detected: ${title}`,
+    noSearchResult: 'No search results',
+    resultFound: (count) => `${count} results found`,
+    viewFormula: 'View formula',
+    noResultTitle: 'No results',
+    noResultBody: 'Try another keyword, for example "area", "triangle", or "volume".',
+    emptyTitle: 'Topic not found',
+    emptyBody: 'Change the search keyword to see formulas and illustrations.',
+  },
+};
 
 const matchesSearchKeyword = (item, keyword) => {
   return item.name.toLowerCase().includes(keyword);
@@ -34,7 +76,13 @@ export default function App() {
   const { width } = useWindowDimensions();
   const isWide = width >= 900;
   const isPhone = width < 760;
-  const [activeSectionId, setActiveSectionId] = useState(formulaSections[0].id);
+  const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const formulaSections = useMemo(
+    () => formulaSectionsByLocale[locale] || DEFAULT_SECTIONS,
+    [locale]
+  );
+  const copy = UI_COPY[locale] || UI_COPY[DEFAULT_LOCALE];
+  const [activeSectionId, setActiveSectionId] = useState(DEFAULT_SECTIONS[0].id);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpenId, setMobileOpenId] = useState(null);
   const [isStorageHydrated, setIsStorageHydrated] = useState(Platform.OS !== 'web');
@@ -43,10 +91,10 @@ export default function App() {
 
   const activeSection = useMemo(
     () => formulaSections.find((section) => section.id === activeSectionId) || formulaSections[0],
-    [activeSectionId]
+    [activeSectionId, formulaSections]
   );
 
-  const [activeShapeId, setActiveShapeId] = useState(activeSection.items[0].id);
+  const [activeShapeId, setActiveShapeId] = useState(DEFAULT_SECTIONS[0].items[0].id);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof document === 'undefined') {
@@ -73,11 +121,17 @@ export default function App() {
         return;
       }
       const parsed = JSON.parse(raw);
-      const storedSection = formulaSections.find((section) => section.id === parsed.activeSectionId);
+      const storedLocale = SUPPORTED_LOCALES.includes(parsed.locale) ? parsed.locale : DEFAULT_LOCALE;
+      const sectionsForLocale = formulaSectionsByLocale[storedLocale] || DEFAULT_SECTIONS;
+      const storedSection = sectionsForLocale.find((section) => section.id === parsed.activeSectionId);
       if (!storedSection) {
+        setLocale(storedLocale);
+        setActiveSectionId(sectionsForLocale[0].id);
+        setActiveShapeId(sectionsForLocale[0].items[0].id);
         return;
       }
       const storedShape = storedSection.items.find((item) => item.id === parsed.activeShapeId);
+      setLocale(storedLocale);
       setActiveSectionId(storedSection.id);
       setActiveShapeId(storedShape ? storedShape.id : storedSection.items[0].id);
       if (storedShape && parsed.mobileOpenId === storedShape.id) {
@@ -98,6 +152,7 @@ export default function App() {
       window.localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
+          locale,
           activeSectionId,
           activeShapeId,
           mobileOpenId,
@@ -106,7 +161,7 @@ export default function App() {
     } catch (error) {
       // Ignore storage quota or privacy mode errors.
     }
-  }, [isStorageHydrated, activeSectionId, activeShapeId, mobileOpenId]);
+  }, [isStorageHydrated, locale, activeSectionId, activeShapeId, mobileOpenId]);
 
   const openMobileDetail = (itemId) => {
     setActiveShapeId(itemId);
@@ -135,7 +190,7 @@ export default function App() {
           ? section.items.filter((item) => matchesSearchKeyword(item, keyword))
           : section.items,
       })),
-    [keyword]
+    [keyword, formulaSections]
   );
 
   const autoSectionId = useMemo(() => {
@@ -216,22 +271,40 @@ export default function App() {
         <View style={styles.bgGlowTop} />
         <View style={styles.bgGlowBottom} />
 
+        <View style={[styles.languageRow, styles.languageRowTop]}>
+          <View style={styles.languageSwitch}>
+            {SUPPORTED_LOCALES.map((lang) => {
+              const isActiveLang = lang === locale;
+              const label = lang === 'id' ? copy.languageId : copy.languageEn;
+              return (
+                <Pressable
+                  key={lang}
+                  onPress={() => setLocale(lang)}
+                  style={[styles.languageButton, isActiveLang && styles.languageButtonActive]}
+                >
+                  <Text style={[styles.languageButtonText, isActiveLang && styles.languageButtonTextActive]}>
+                    {label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
         {!isPhone && (
           <View style={styles.heroCard}>
-            <Text style={styles.heroEyebrow}>Belajar Matematika SD</Text>
-            <Text style={styles.heroTitle}>Pusat Rumus Matematika SD</Text>
-            <Text style={styles.heroSubtitle}>
-              Pilih kategori di tab, lalu pilih materi yang ingin dipelajari.
-            </Text>
+            <Text style={styles.heroEyebrow}>{copy.heroEyebrow}</Text>
+            <Text style={styles.heroTitle}>{copy.heroTitle}</Text>
+            <Text style={styles.heroSubtitle}>{copy.heroSubtitle}</Text>
 
             <View style={styles.statsRow}>
               <View style={styles.statPill}>
                 <Text style={styles.statValue}>{formulaSections.length}</Text>
-                <Text style={styles.statLabel}>Kategori</Text>
+                <Text style={styles.statLabel}>{copy.statCategory}</Text>
               </View>
               <View style={styles.statPill}>
                 <Text style={styles.statValue}>{totalShapes}</Text>
-                <Text style={styles.statLabel}>Materi</Text>
+                <Text style={styles.statLabel}>{copy.statItems}</Text>
               </View>
             </View>
           </View>
@@ -242,7 +315,7 @@ export default function App() {
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Cari bangun atau rumus..."
+              placeholder={copy.searchPlaceholder}
               placeholderTextColor="#94a3b8"
               style={styles.searchInput}
             />
@@ -254,7 +327,7 @@ export default function App() {
           </View>
           {keyword.length > 0 && (
             <Text style={styles.globalSearchMeta}>
-              {filteredItems.length ? `Terdeteksi: ${activeSection.title}` : 'Tidak ada hasil pencarian'}
+              {filteredItems.length ? copy.detectedCategory(activeSection.title) : copy.noSearchResult}
             </Text>
           )}
         </View>
@@ -282,9 +355,7 @@ export default function App() {
             <Text style={styles.selectorTitle}>{activeSection.title}</Text>
             <Text style={styles.selectorSubtitle}>{activeSection.description}</Text>
 
-            <Text style={styles.searchMeta}>
-              {filteredItems.length} hasil ditemukan
-            </Text>
+            <Text style={styles.searchMeta}>{copy.resultFound(filteredItems.length)}</Text>
 
             <View style={styles.shapeList}>
               {filteredItems.map((item) => {
@@ -311,6 +382,7 @@ export default function App() {
                       <ShapeIllustration
                         shapeId={item.id}
                         tintColor={activeSection.theme.primary}
+                        locale={locale}
                         compact
                         style={styles.shapePreview}
                       />
@@ -323,7 +395,7 @@ export default function App() {
                         </Text>
                         {isPhone && (
                           <Text style={[styles.shapeTapHint, isSelected && { color: activeSection.theme.primary }]}>
-                            Lihat rumus
+                            {copy.viewFormula}
                           </Text>
                         )}
                       </View>
@@ -333,10 +405,8 @@ export default function App() {
               })}
               {!filteredItems.length && (
                 <View style={styles.noResultBox}>
-                  <Text style={styles.noResultTitle}>Tidak ada hasil</Text>
-                  <Text style={styles.noResultText}>
-                    Coba kata kunci lain, misalnya "luas", "segitiga", atau "volume".
-                  </Text>
+                  <Text style={styles.noResultTitle}>{copy.noResultTitle}</Text>
+                  <Text style={styles.noResultText}>{copy.noResultBody}</Text>
                 </View>
               )}
             </View>
@@ -346,13 +416,11 @@ export default function App() {
           {!isPhone && (
             <Animated.View style={[styles.detailPanel, { opacity: fadeAnim }]}>
               {activeShape ? (
-                <FormulaCard item={activeShape} section={activeSection} />
+                <FormulaCard item={activeShape} section={activeSection} locale={locale} />
               ) : (
                 <View style={styles.emptyCard}>
-                  <Text style={styles.emptyTitle}>Bangun tidak ditemukan</Text>
-                  <Text style={styles.emptyText}>
-                    Ubah kata kunci pencarian untuk melihat rumus dan gambar bangun.
-                  </Text>
+                  <Text style={styles.emptyTitle}>{copy.emptyTitle}</Text>
+                  <Text style={styles.emptyText}>{copy.emptyBody}</Text>
                 </View>
               )}
             </Animated.View>
@@ -380,6 +448,7 @@ export default function App() {
             <FormulaCard
               item={mobileOpenShape}
               section={activeSection}
+              locale={locale}
               mobileMode
               onBack={closeMobileDetail}
             />
@@ -488,6 +557,40 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#dbe1eb',
     padding: 10,
+  },
+  languageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+  },
+  languageRowTop: {
+    marginBottom: 2,
+  },
+  languageSwitch: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  languageButton: {
+    borderWidth: 1,
+    borderColor: '#dbe1eb',
+    backgroundColor: '#f8fafc',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  languageButtonActive: {
+    borderColor: '#1d4ed8',
+    backgroundColor: '#dbeafe',
+  },
+  languageButtonText: {
+    fontSize: 12,
+    color: '#334155',
+    fontWeight: '700',
+    fontFamily: FONT_UI,
+  },
+  languageButtonTextActive: {
+    color: '#1e3a8a',
   },
   tabBar: {
     backgroundColor: '#ffffff',

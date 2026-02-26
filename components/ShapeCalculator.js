@@ -25,6 +25,17 @@ const FONT_UI = Platform.select({
   default: 'sans-serif',
 });
 
+const CALCULATOR_COPY = {
+  id: {
+    helperText: 'Isi nilai yang kamu tahu. Kolom kosong dihitung otomatis.',
+    placeholder: '0',
+  },
+  en: {
+    helperText: 'Fill in the values you know. Empty fields are calculated automatically.',
+    placeholder: '0',
+  },
+};
+
 const CALCULATOR_FIELDS = {
   persegi: [
     { key: 's', label: 's (sisi)' },
@@ -203,6 +214,160 @@ const CALCULATOR_FIELDS = {
     { key: 'volume', label: 'Volume (V)' },
     { key: 'luas', label: 'Luas Permukaan (LP)' },
   ],
+};
+
+const FIELD_LABEL_OVERRIDES_EN = {
+  persegi: {
+    s: 's (side)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  'persegi-panjang': {
+    p: 'p (length)',
+    l: 'l (width)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  segitiga: {
+    a: 'a (base)',
+    t: 't (height)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  lingkaran: {
+    r: 'r (radius)',
+    d: 'd (diameter)',
+    luas: 'Area (A)',
+    kel: 'Circumference (C)',
+  },
+  'jajar-genjang': {
+    a: 'a (base)',
+    t: 't (height)',
+    b: 'b (side)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  trapesium: {
+    a: 'a (parallel side 1)',
+    b: 'b (parallel side 2)',
+    t: 't (height)',
+    c: 'c (side 1)',
+    d: 'd (side 2)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  'belah-ketupat': {
+    s: 's (side)',
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  'layang-layang': {
+    luas: 'Area (A)',
+    kel: 'Perimeter (P)',
+  },
+  'segi-lima': {
+    s: 's (side)',
+    ap: 'ap (apothem)',
+    kel: 'Perimeter (P)',
+    luas: 'Area (A)',
+  },
+  'segi-enam': {
+    s: 's (side)',
+    ap: 'ap (apothem)',
+    kel: 'Perimeter (P)',
+    luas: 'Area (A)',
+  },
+  'segi-n': {
+    n: 'n (number of sides)',
+    s: 's (side)',
+    ap: 'ap (apothem)',
+    kel: 'Perimeter (P)',
+    luas: 'Area (A)',
+  },
+  pythagoras: {
+    a: 'a (leg)',
+    b: 'b (leg)',
+    c: 'c (hypotenuse)',
+  },
+  'kecepatan-jarak-waktu': {
+    v: 'v (speed)',
+    s: 's (distance)',
+    t: 't (time)',
+  },
+  persen: {
+    bagian: 'Part',
+    total: 'Total',
+    persen: 'Percentage (%)',
+  },
+  'rata-rata': {
+    jumlah: 'Sum',
+    n: 'Number of data (n)',
+    rata: 'Average',
+  },
+  skala: {
+    skala: 'Scale',
+    jarakPeta: 'Map distance',
+    jarakSebenarnya: 'Actual distance',
+  },
+  'fpb-kpk': {
+    fpb: 'GCF',
+    kpk: 'LCM',
+  },
+  pecahan: {
+    pembilang: 'Numerator',
+    penyebut: 'Denominator',
+    desimal: 'Decimal',
+    persen: 'Percent (%)',
+  },
+  'konversi-satuan': {
+    inci: 'inch (in)',
+    kaki: 'foot (ft)',
+    mil: 'mile (mi)',
+  },
+  debit: {
+    debit: 'Flow rate',
+    volume: 'Volume',
+    waktu: 'Time',
+  },
+  kubus: {
+    s: 's (side)',
+    luas: 'Surface Area (SA)',
+  },
+  balok: {
+    p: 'p (length)',
+    l: 'l (width)',
+    t: 't (height)',
+    luas: 'Surface Area (SA)',
+  },
+  'prisma-segitiga': {
+    luasAlas: 'L<sub>base</sub>',
+    kelAlas: 'P<sub>base</sub>',
+    tp: 'Prism height',
+    luas: 'Surface Area (SA)',
+  },
+  'limas-segiempat': {
+    luasAlas: 'L<sub>base</sub>',
+    kelAlas: 'P<sub>base</sub>',
+    ts: 'Slant height',
+    t: 'Height',
+    luas: 'Surface Area (SA)',
+  },
+  tabung: {
+    r: 'r (radius)',
+    t: 't (height)',
+    luas: 'Surface Area (SA)',
+  },
+  kerucut: {
+    r: 'r (radius)',
+    t: 't (height)',
+    s: 's (slant height)',
+    luas: 'Surface Area (SA)',
+  },
+  bola: {
+    r: 'r (radius)',
+    d: 'd (diameter)',
+    luas: 'Surface Area (SA)',
+  },
 };
 
 const formatNumber = (value) => {
@@ -775,6 +940,21 @@ const buildEmptyValues = (fields) =>
     return acc;
   }, {});
 
+const getLocalizedFields = (shapeId, locale) => {
+  const baseFields = CALCULATOR_FIELDS[shapeId] || [];
+  if (locale !== 'en') {
+    return baseFields;
+  }
+  const overrides = FIELD_LABEL_OVERRIDES_EN[shapeId];
+  if (!overrides) {
+    return baseFields;
+  }
+  return baseFields.map((field) => ({
+    ...field,
+    label: overrides[field.key] || field.label,
+  }));
+};
+
 const recomputeDisplayValues = (shapeId, fields, nextValues, manualMap, activeKey = null) => {
   const manualSeeds = {};
   fields.forEach((field) => {
@@ -800,8 +980,9 @@ const recomputeDisplayValues = (shapeId, fields, nextValues, manualMap, activeKe
   return merged;
 };
 
-export default function ShapeCalculator({ shapeId, accentColor }) {
-  const fields = CALCULATOR_FIELDS[shapeId] || [];
+export default function ShapeCalculator({ shapeId, accentColor, locale = 'id' }) {
+  const fields = useMemo(() => getLocalizedFields(shapeId, locale), [shapeId, locale]);
+  const copy = CALCULATOR_COPY[locale] || CALCULATOR_COPY.id;
   const initialValues = useMemo(() => buildEmptyValues(fields), [fields]);
   const [state, setState] = useState({ values: initialValues, manual: {} });
 
@@ -845,9 +1026,7 @@ export default function ShapeCalculator({ shapeId, accentColor }) {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.helperText}>
-        Isi nilai yang kamu tahu. Kolom kosong dihitung otomatis.
-      </Text>
+      <Text style={styles.helperText}>{copy.helperText}</Text>
       <View style={styles.grid}>
         {fields.map((field) => (
           <View key={field.key} style={styles.fieldItem}>
@@ -859,7 +1038,7 @@ export default function ShapeCalculator({ shapeId, accentColor }) {
               onChangeText={(text) => onChangeValue(field.key, text)}
               keyboardType='numeric'
               style={styles.fieldInput}
-              placeholder='0'
+              placeholder={copy.placeholder}
               placeholderTextColor='#94a3b8'
             />
           </View>
