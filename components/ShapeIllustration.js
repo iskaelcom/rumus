@@ -172,6 +172,58 @@ const buildSvg = (shapeId, stroke) => {
       <line x1='154' y1='69' x2='166' y2='114' stroke='${helperStroke}' stroke-width='1.8' />
       <text x='160' y='98' fill='${labelFill}' text-anchor='middle' font-size='13' font-weight='700'>1 : n</text>
     `,
+    'fpb-kpk': `
+      <rect x='72' y='52' width='76' height='38' rx='8' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
+      <rect x='172' y='52' width='76' height='38' rx='8' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
+      <text x='110' y='75' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>a</text>
+      <text x='210' y='75' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>b</text>
+      <line x1='110' y1='94' x2='110' y2='122' stroke='${helperStroke}' stroke-width='1.8' />
+      <line x1='210' y1='94' x2='210' y2='122' stroke='${helperStroke}' stroke-width='1.8' />
+      <rect x='64' y='122' width='96' height='34' rx='8' fill='#ffffff' stroke='${stroke}' stroke-width='2.2' />
+      <rect x='160' y='122' width='96' height='34' rx='8' fill='#ffffff' stroke='${stroke}' stroke-width='2.2' />
+      <text x='112' y='144' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>FPB</text>
+      <text x='208' y='144' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>KPK</text>
+    `,
+    pecahan: `
+      <line x1='104' y1='90' x2='216' y2='90' stroke='${stroke}' stroke-width='3' />
+      <text x='160' y='74' fill='${labelFill}' text-anchor='middle' font-size='16' font-weight='700'>pembilang</text>
+      <text x='160' y='116' fill='${labelFill}' text-anchor='middle' font-size='16' font-weight='700'>penyebut</text>
+      <text x='241' y='96' fill='${labelFill}' text-anchor='middle' font-size='15' font-weight='700'>= %</text>
+    `,
+    'konversi-satuan': `
+      <defs>
+        <marker id='arrow-down' markerWidth='8' markerHeight='8' refX='7' refY='4' orient='auto' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 8 4 L 0 8 z' fill='${helperStroke}' />
+        </marker>
+        <marker id='arrow-up' markerWidth='8' markerHeight='8' refX='7' refY='4' orient='auto' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 8 4 L 0 8 z' fill='${helperStroke}' />
+        </marker>
+      </defs>
+      <line x1='108' y1='28' x2='194' y2='61' stroke='${helperStroke}' stroke-width='2' stroke-linecap='round' marker-end='url(#arrow-down)' />
+      <text x='200' y='54' fill='${labelFill}' font-size='11' font-weight='700'>x10</text>
+      <line x1='212' y1='156' x2='114' y2='118' stroke='${helperStroke}' stroke-width='2' stroke-linecap='round' marker-end='url(#arrow-up)' />
+      <text x='84' y='148' fill='${labelFill}' font-size='11' font-weight='700'>:10</text>
+      <rect x='36' y='36' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='72' y='50' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='108' y='64' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='144' y='78' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='180' y='92' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='216' y='106' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <rect x='252' y='120' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
+      <text x='52' y='51' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>km</text>
+      <text x='88' y='65' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>hm</text>
+      <text x='124' y='79' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dam</text>
+      <text x='160' y='93' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>m</text>
+      <text x='196' y='107' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dm</text>
+      <text x='232' y='121' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>cm</text>
+      <text x='268' y='135' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>mm</text>
+    `,
+    debit: `
+      <rect x='58' y='38' width='204' height='104' rx='16' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
+      <text x='160' y='76' fill='${labelFill}' text-anchor='middle' font-size='24' font-weight='700'>Q = V / t</text>
+      <text x='160' y='106' fill='${labelFill}' text-anchor='middle' font-size='18' font-weight='700'>V = Q x t</text>
+      <text x='160' y='132' fill='${labelFill}' text-anchor='middle' font-size='18' font-weight='700'>t = V / Q</text>
+    `,
     kubus: `
       <rect x='92' y='64' width='84' height='84' fill='none' stroke='${stroke}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' />
       <rect x='136' y='40' width='84' height='84' fill='none' stroke='${stroke}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' />

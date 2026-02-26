@@ -3,6 +3,16 @@ import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import renderSubscriptText from './renderSubscriptText';
 
 const PI = Math.PI;
+const LENGTH_TO_METER = {
+  km: 1000,
+  hm: 100,
+  dam: 10,
+  m: 1,
+  dm: 0.1,
+  cm: 0.01,
+  mm: 0.001,
+};
+const LENGTH_KEYS = Object.keys(LENGTH_TO_METER);
 
 const FONT_UI = Platform.select({
   web: 'Geist',
@@ -113,6 +123,32 @@ const CALCULATOR_FIELDS = {
     { key: 'jarakPeta', label: 'Jarak peta' },
     { key: 'jarakSebenarnya', label: 'Jarak sebenarnya' },
   ],
+  'fpb-kpk': [
+    { key: 'a', label: 'a' },
+    { key: 'b', label: 'b' },
+    { key: 'fpb', label: 'FPB' },
+    { key: 'kpk', label: 'KPK' },
+  ],
+  pecahan: [
+    { key: 'pembilang', label: 'Pembilang' },
+    { key: 'penyebut', label: 'Penyebut' },
+    { key: 'desimal', label: 'Desimal' },
+    { key: 'persen', label: 'Persen (%)' },
+  ],
+  'konversi-satuan': [
+    { key: 'km', label: 'km' },
+    { key: 'hm', label: 'hm' },
+    { key: 'dam', label: 'dam' },
+    { key: 'm', label: 'm' },
+    { key: 'dm', label: 'dm' },
+    { key: 'cm', label: 'cm' },
+    { key: 'mm', label: 'mm' },
+  ],
+  debit: [
+    { key: 'debit', label: 'Debit' },
+    { key: 'volume', label: 'Volume' },
+    { key: 'waktu', label: 'Waktu' },
+  ],
   kubus: [
     { key: 's', label: 's (sisi)' },
     { key: 'volume', label: 'Volume (V)' },
@@ -192,6 +228,26 @@ const cleanInput = (text) => {
   return `${normalized.slice(0, firstDot + 1)}${normalized.slice(firstDot + 1).replace(/\./g, '')}`;
 };
 
+const gcdInt = (a, b) => {
+  let x = Math.abs(Math.trunc(a));
+  let y = Math.abs(Math.trunc(b));
+  while (y !== 0) {
+    const temp = y;
+    y = x % y;
+    x = temp;
+  }
+  return x;
+};
+
+const lcmInt = (a, b) => {
+  const x = Math.abs(Math.trunc(a));
+  const y = Math.abs(Math.trunc(b));
+  if (x === 0 || y === 0) {
+    return 0;
+  }
+  return (x / gcdInt(x, y)) * y;
+};
+
 const solveRegularPolygon = (values, set, n) => {
   if (!Number.isFinite(n) || !Number.isInteger(n) || n <= 2) {
     return;
@@ -224,7 +280,7 @@ const solveRegularPolygon = (values, set, n) => {
   }
 };
 
-const solveShapeValues = (shapeId, seedValues) => {
+const solveShapeValues = (shapeId, seedValues, preferredKey = null) => {
   const values = { ...seedValues };
   const has = (key) => Number.isFinite(values[key]);
   const setFactory = (flagRef) => (key, value) => {
@@ -480,6 +536,65 @@ const solveShapeValues = (shapeId, seedValues) => {
         }
         break;
       }
+      case 'fpb-kpk': {
+        if (has('a') && has('b') && Number.isInteger(values.a) && Number.isInteger(values.b) && values.a > 0 && values.b > 0) {
+          set('fpb', gcdInt(values.a, values.b));
+          set('kpk', lcmInt(values.a, values.b));
+        }
+        break;
+      }
+      case 'pecahan': {
+        if (has('pembilang') && has('penyebut') && values.penyebut > 0) {
+          set('desimal', values.pembilang / values.penyebut);
+          set('persen', (values.pembilang / values.penyebut) * 100);
+        }
+        if (has('desimal')) {
+          set('persen', values.desimal * 100);
+        }
+        if (has('persen')) {
+          set('desimal', values.persen / 100);
+        }
+        if (has('desimal') && has('penyebut') && values.penyebut > 0) {
+          set('pembilang', values.desimal * values.penyebut);
+        }
+        if (has('persen') && has('penyebut') && values.penyebut > 0) {
+          set('pembilang', (values.persen / 100) * values.penyebut);
+        }
+        if (has('pembilang') && has('desimal') && values.desimal > 0) {
+          set('penyebut', values.pembilang / values.desimal);
+        }
+        if (has('pembilang') && has('persen') && values.persen > 0) {
+          set('penyebut', values.pembilang / (values.persen / 100));
+        }
+        break;
+      }
+      case 'konversi-satuan': {
+        const sourceUnit =
+          (preferredKey && LENGTH_KEYS.includes(preferredKey) && has(preferredKey) && preferredKey) ||
+          LENGTH_KEYS.find((unitKey) => has(unitKey));
+        if (sourceUnit) {
+          const valueInMeter = values[sourceUnit] * LENGTH_TO_METER[sourceUnit];
+          LENGTH_KEYS.forEach((unitKey) => {
+            if (unitKey === sourceUnit) {
+              return;
+            }
+            set(unitKey, valueInMeter / LENGTH_TO_METER[unitKey]);
+          });
+        }
+        break;
+      }
+      case 'debit': {
+        if (has('volume') && has('waktu') && values.waktu > 0) {
+          set('debit', values.volume / values.waktu);
+        }
+        if (has('debit') && has('waktu')) {
+          set('volume', values.debit * values.waktu);
+        }
+        if (has('volume') && has('debit') && values.debit > 0) {
+          set('waktu', values.volume / values.debit);
+        }
+        break;
+      }
       case 'kubus': {
         if (has('s')) {
           set('volume', values.s ** 3);
@@ -652,7 +767,7 @@ const buildEmptyValues = (fields) =>
     return acc;
   }, {});
 
-const recomputeDisplayValues = (shapeId, fields, nextValues, manualMap) => {
+const recomputeDisplayValues = (shapeId, fields, nextValues, manualMap, activeKey = null) => {
   const manualSeeds = {};
   fields.forEach((field) => {
     if (!manualMap[field.key]) {
@@ -665,7 +780,7 @@ const recomputeDisplayValues = (shapeId, fields, nextValues, manualMap) => {
     manualSeeds[field.key] = parsed;
   });
 
-  const solved = solveShapeValues(shapeId, manualSeeds);
+  const solved = solveShapeValues(shapeId, manualSeeds, activeKey);
   const merged = {};
   fields.forEach((field) => {
     if (manualMap[field.key]) {
@@ -695,13 +810,26 @@ export default function ShapeCalculator({ shapeId, accentColor }) {
     setState((prevState) => {
       const nextValues = { ...prevState.values, [key]: cleaned };
       const nextManual = { ...prevState.manual };
-      if (cleaned.trim() === '') {
-        delete nextManual[key];
+
+      if (shapeId === 'konversi-satuan') {
+        if (cleaned.trim() === '') {
+          delete nextManual[key];
+        } else {
+          Object.keys(nextManual).forEach((manualKey) => {
+            delete nextManual[manualKey];
+          });
+          nextManual[key] = true;
+        }
       } else {
-        nextManual[key] = true;
+        if (cleaned.trim() === '') {
+          delete nextManual[key];
+        } else {
+          nextManual[key] = true;
+        }
       }
+
       return {
-        values: recomputeDisplayValues(shapeId, fields, nextValues, nextManual),
+        values: recomputeDisplayValues(shapeId, fields, nextValues, nextManual, key),
         manual: nextManual,
       };
     });

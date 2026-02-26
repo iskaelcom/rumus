@@ -310,6 +310,69 @@ export const formulaSections = [
           'jarak sebenarnya = jarak asli',
         ],
       },
+      {
+        id: 'fpb-kpk',
+        name: 'FPB dan KPK',
+        tagline: 'Menentukan faktor persekutuan terbesar dan kelipatan persekutuan terkecil.',
+        formulas: [
+          { label: 'FPB', value: 'faktor persekutuan terbesar dari a dan b' },
+          { label: 'KPK', value: '(a x b) / FPB(a, b)' },
+        ],
+        variables: [
+          'a dan b = bilangan bulat positif',
+          'FPB = faktor persekutuan terbesar',
+          'KPK = kelipatan persekutuan terkecil',
+        ],
+      },
+      {
+        id: 'pecahan',
+        name: 'Pecahan Dasar',
+        tagline: 'Konversi pecahan ke desimal dan persen, serta konsep pecahan senilai.',
+        formulas: [
+          { label: 'Nilai Pecahan', value: 'pembilang / penyebut' },
+          { label: 'Persentase', value: '(pembilang / penyebut) x 100%' },
+          { label: 'Pecahan Senilai', value: '(p x n) / (q x n)' },
+        ],
+        variables: [
+          'pembilang = angka atas',
+          'penyebut = angka bawah (tidak boleh 0)',
+          'n = bilangan pengali yang sama',
+        ],
+      },
+      {
+        id: 'konversi-satuan',
+        name: 'Konversi Satuan Panjang',
+        tagline: 'Mengubah nilai antar km, hm, dam, m, dm, cm, dan mm.',
+        formulas: [
+          { label: 'Tangga Satuan', value: 'km - hm - dam - m - dm - cm - mm' },
+          { label: 'Turun 1 Anak Tangga', value: 'x 10' },
+          { label: 'Naik 1 Anak Tangga', value: ': 10' },
+        ],
+        variables: [
+          'km = kilometer',
+          'hm = hektometer',
+          'dam = dekameter',
+          'm = meter',
+          'dm = desimeter',
+          'cm = sentimeter',
+          'mm = milimeter',
+        ],
+      },
+      {
+        id: 'debit',
+        name: 'Debit',
+        tagline: 'Hubungan antara volume, waktu, dan laju aliran.',
+        formulas: [
+          { label: 'Debit', value: 'debit = volume / waktu' },
+          { label: 'Volume', value: 'volume = debit x waktu' },
+          { label: 'Waktu', value: 'waktu = volume / debit' },
+        ],
+        variables: [
+          'debit = laju aliran (misal liter/detik)',
+          'volume = banyak zat cair',
+          'waktu = lama aliran',
+        ],
+      },
     ],
   },
 ];
