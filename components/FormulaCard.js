@@ -16,16 +16,28 @@ const COPY = {
     illustration: 'Ilustrasi',
     calculator: 'Kalkulator',
     variables: 'Keterangan Variabel',
+    addBookmark: 'Simpan Bookmark',
+    removeBookmark: 'Hapus Bookmark',
   },
   en: {
     back: 'Back',
     illustration: 'Illustration',
     calculator: 'Calculator',
     variables: 'Variable Notes',
+    addBookmark: 'Add Bookmark',
+    removeBookmark: 'Remove Bookmark',
   },
 };
 
-export default function FormulaCard({ item, section, locale = 'id', mobileMode = false, onBack }) {
+export default function FormulaCard({
+  item,
+  section,
+  locale = 'id',
+  mobileMode = false,
+  onBack,
+  isBookmarked = false,
+  onToggleBookmark,
+}) {
   const copy = COPY[locale] || COPY.id;
 
   return (
@@ -49,6 +61,22 @@ export default function FormulaCard({ item, section, locale = 'id', mobileMode =
           </View>
           <Text style={styles.title}>{item.name}</Text>
         </>
+      )}
+      {typeof onToggleBookmark === 'function' && (
+        <Pressable
+          onPress={() => onToggleBookmark(item.id)}
+          style={[
+            styles.bookmarkButton,
+            {
+              borderColor: section.theme.primary,
+              backgroundColor: isBookmarked ? section.theme.soft : '#ffffff',
+            },
+          ]}
+        >
+          <Text style={[styles.bookmarkButtonText, { color: section.theme.primary }]}>
+            {isBookmarked ? `★ ${copy.removeBookmark}` : `☆ ${copy.addBookmark}`}
+          </Text>
+        </Pressable>
       )}
       <Text style={styles.tagline}>{item.tagline}</Text>
       <Text style={styles.illustrationTitle}>{copy.illustration}</Text>
@@ -141,6 +169,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     fontWeight: '700',
     marginTop: -4,
+    fontFamily: FONT_UI,
+  },
+  bookmarkButton: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: 10,
+  },
+  bookmarkButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
     fontFamily: FONT_UI,
   },
   tagline: {

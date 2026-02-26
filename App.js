@@ -13,12 +13,22 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as FileSystem from 'expo-file-system';
 import FormulaCard from './components/FormulaCard';
 import ShapeIllustration from './components/ShapeIllustration';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, formulaSectionsByLocale } from './data/formulas';
 
 const STORAGE_KEY = 'rumus:last-selection:v1';
 const DEFAULT_SECTIONS = formulaSectionsByLocale[DEFAULT_LOCALE];
+const DEFAULT_SHAPE_IDS = new Set(
+  DEFAULT_SECTIONS.flatMap((section) => section.items.map((item) => item.id))
+);
+const BOOKMARK_SECTION_ID = 'bookmark';
+const BOOKMARK_THEME = {
+  primary: '#1e293b',
+  soft: '#e2e8f0',
+};
+const NATIVE_STORAGE_FILENAME = 'rumus-state.json';
 
 const UI_COPY = {
   id: {
@@ -30,6 +40,8 @@ const UI_COPY = {
     language: 'Bahasa',
     languageId: 'Indonesia',
     languageEn: 'English',
+    bookmarkTab: 'Bookmark',
+    bookmarkDescription: 'Rumus yang kamu simpan untuk akses cepat.',
     searchPlaceholder: 'Cari bangun atau rumus...',
     detectedCategory: (title) => `Terdeteksi: ${title}`,
     noSearchResult: 'Tidak ada hasil pencarian',
@@ -49,6 +61,8 @@ const UI_COPY = {
     language: 'Language',
     languageId: 'Indonesia',
     languageEn: 'English',
+    bookmarkTab: 'Bookmarks',
+    bookmarkDescription: 'Saved formulas for quick access.',
     searchPlaceholder: 'Search shapes or formulas...',
     detectedCategory: (title) => `Detected: ${title}`,
     noSearchResult: 'No search results',
@@ -72,11 +86,54 @@ const FONT_UI = Platform.select({
   default: 'sans-serif',
 });
 
+const getNativeStoragePath = () =>
+  FileSystem.documentDirectory
+    ? `${FileSystem.documentDirectory}${NATIVE_STORAGE_FILENAME}`
+    : null;
+
+const readPersistedState = async () => {
+  if (Platform.OS === 'web') {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    return window.localStorage.getItem(STORAGE_KEY);
+  }
+
+  const nativePath = getNativeStoragePath();
+  if (!nativePath) {
+    return null;
+  }
+
+  const info = await FileSystem.getInfoAsync(nativePath);
+  if (!info.exists) {
+    return null;
+  }
+  return FileSystem.readAsStringAsync(nativePath);
+};
+
+const writePersistedState = async (serializedValue) => {
+  if (Platform.OS === 'web') {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem(STORAGE_KEY, serializedValue);
+    return;
+  }
+
+  const nativePath = getNativeStoragePath();
+  if (!nativePath) {
+    return;
+  }
+
+  await FileSystem.writeAsStringAsync(nativePath, serializedValue);
+};
+
 export default function App() {
   const { width } = useWindowDimensions();
   const isWide = width >= 900;
   const isPhone = width < 760;
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
+  const [bookmarkedShapeIds, setBookmarkedShapeIds] = useState([]);
   const formulaSections = useMemo(
     () => formulaSectionsByLocale[locale] || DEFAULT_SECTIONS,
     [locale]
@@ -89,9 +146,51 @@ export default function App() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const mobileDetailAnim = useRef(new Animated.Value(0)).current;
 
+  const sectionByItemId = useMemo(() => {
+    const map = new Map();
+    formulaSections.forEach((section) => {
+      section.items.forEach((item) => {
+        map.set(item.id, section);
+      });
+    });
+    return map;
+  }, [formulaSections]);
+
+  const itemById = useMemo(() => {
+    const map = new Map();
+    formulaSections.forEach((section) => {
+      section.items.forEach((item) => {
+        map.set(item.id, item);
+      });
+    });
+    return map;
+  }, [formulaSections]);
+
+  const bookmarkItems = useMemo(
+    () => bookmarkedShapeIds.map((itemId) => itemById.get(itemId)).filter(Boolean),
+    [bookmarkedShapeIds, itemById]
+  );
+
+  const sectionsWithBookmarks = useMemo(() => {
+    if (!bookmarkItems.length) {
+      return formulaSections;
+    }
+    return [
+      {
+        id: BOOKMARK_SECTION_ID,
+        title: copy.bookmarkTab,
+        description: copy.bookmarkDescription,
+        theme: BOOKMARK_THEME,
+        items: bookmarkItems,
+      },
+      ...formulaSections,
+    ];
+  }, [bookmarkItems, formulaSections, copy.bookmarkTab, copy.bookmarkDescription]);
+
   const activeSection = useMemo(
-    () => formulaSections.find((section) => section.id === activeSectionId) || formulaSections[0],
-    [activeSectionId, formulaSections]
+    () =>
+      sectionsWithBookmarks.find((section) => section.id === activeSectionId) || sectionsWithBookmarks[0],
+    [activeSectionId, sectionsWithBookmarks]
   );
 
   const [activeShapeId, setActiveShapeId] = useState(DEFAULT_SECTIONS[0].items[0].id);
@@ -123,19 +222,63 @@ export default function App() {
       const parsed = JSON.parse(raw);
       const storedLocale = SUPPORTED_LOCALES.includes(parsed.locale) ? parsed.locale : DEFAULT_LOCALE;
       const sectionsForLocale = formulaSectionsByLocale[storedLocale] || DEFAULT_SECTIONS;
-      const storedSection = sectionsForLocale.find((section) => section.id === parsed.activeSectionId);
-      if (!storedSection) {
-        setLocale(storedLocale);
-        setActiveSectionId(sectionsForLocale[0].id);
-        setActiveShapeId(sectionsForLocale[0].items[0].id);
-        return;
+      const storedBookmarks = Array.isArray(parsed.bookmarkedShapeIds)
+        ? parsed.bookmarkedShapeIds.filter((itemId) => DEFAULT_SHAPE_IDS.has(itemId))
+        : [];
+
+      // Improved restoration logic:
+      // 1. Try to restore the previously active section first.
+      // 2. If it's the bookmark section, make sure bookmarks exist.
+      // 3. Otherwise default to the first section.
+      let nextSectionId = sectionsForLocale[0].id;
+      const wasOnBookmark = parsed.activeSectionId === BOOKMARK_SECTION_ID;
+
+      if (wasOnBookmark && storedBookmarks.length > 0) {
+        nextSectionId = BOOKMARK_SECTION_ID;
+      } else {
+        const matchingSection = sectionsForLocale.find(s => s.id === parsed.activeSectionId);
+        if (matchingSection) {
+          nextSectionId = matchingSection.id;
+        } else if (storedBookmarks.length > 0) {
+          // If previous section is invalid but we have bookmarks, default to bookmarks
+          nextSectionId = BOOKMARK_SECTION_ID;
+        }
       }
-      const storedShape = storedSection.items.find((item) => item.id === parsed.activeShapeId);
+
+      // Restore active shape
+      let nextShapeId = sectionsForLocale[0].items[0].id;
+      const activeShapeIdFromStorage = typeof parsed.activeShapeId === 'string' ? parsed.activeShapeId : '';
+
+      if (nextSectionId === BOOKMARK_SECTION_ID) {
+        nextShapeId = storedBookmarks.includes(activeShapeIdFromStorage)
+          ? activeShapeIdFromStorage
+          : storedBookmarks[0];
+      } else {
+        const currentSection = sectionsForLocale.find(s => s.id === nextSectionId);
+        if (currentSection) {
+          const storedShape = currentSection.items.find(item => item.id === activeShapeIdFromStorage);
+          nextShapeId = storedShape ? storedShape.id : currentSection.items[0].id;
+        }
+      }
+
       setLocale(storedLocale);
-      setActiveSectionId(storedSection.id);
-      setActiveShapeId(storedShape ? storedShape.id : storedSection.items[0].id);
-      if (storedShape && parsed.mobileOpenId === storedShape.id) {
-        setMobileOpenId(storedShape.id);
+      setBookmarkedShapeIds(storedBookmarks);
+      setActiveSectionId(nextSectionId);
+      setActiveShapeId(nextShapeId);
+
+      // Restore mobileOpenId:
+      // Check if the mobileOpenId exists in ANY section for the current locale (including bookmarks)
+      const allItemsForLocale = [
+        ...sectionsForLocale.flatMap(s => s.items),
+        ...storedBookmarks.map(id => DEFAULT_SECTIONS.flatMap(s => s.items).find(item => item.id === id)).filter(Boolean)
+      ];
+
+      const validMobileOpenId =
+        typeof parsed.mobileOpenId === 'string' &&
+        allItemsForLocale.some(item => item.id === parsed.mobileOpenId);
+
+      if (validMobileOpenId) {
+        setMobileOpenId(parsed.mobileOpenId);
       }
     } catch (error) {
       // Ignore broken localStorage payload and continue with defaults.
@@ -156,16 +299,26 @@ export default function App() {
           activeSectionId,
           activeShapeId,
           mobileOpenId,
+          bookmarkedShapeIds,
         })
       );
     } catch (error) {
       // Ignore storage quota or privacy mode errors.
     }
-  }, [isStorageHydrated, locale, activeSectionId, activeShapeId, mobileOpenId]);
+  }, [isStorageHydrated, locale, activeSectionId, activeShapeId, mobileOpenId, bookmarkedShapeIds]);
 
   const openMobileDetail = (itemId) => {
     setActiveShapeId(itemId);
     setMobileOpenId(itemId);
+  };
+
+  const toggleBookmark = (itemId) => {
+    setBookmarkedShapeIds((prevIds) => {
+      if (prevIds.includes(itemId)) {
+        return prevIds.filter((storedId) => storedId !== itemId);
+      }
+      return [itemId, ...prevIds];
+    });
   };
 
   const closeMobileDetail = () => {
@@ -183,15 +336,23 @@ export default function App() {
 
   const sectionMatches = useMemo(
     () =>
-      formulaSections.map((section) => ({
+      sectionsWithBookmarks.map((section) => ({
         id: section.id,
         title: section.title,
         items: keyword
           ? section.items.filter((item) => matchesSearchKeyword(item, keyword))
           : section.items,
       })),
-    [keyword, formulaSections]
+    [keyword, sectionsWithBookmarks]
   );
+
+  useEffect(() => {
+    const sectionStillExists = sectionsWithBookmarks.some((section) => section.id === activeSectionId);
+    if (sectionStillExists) {
+      return;
+    }
+    setActiveSectionId(sectionsWithBookmarks[0].id);
+  }, [sectionsWithBookmarks, activeSectionId]);
 
   const autoSectionId = useMemo(() => {
     if (!keyword) {
@@ -261,6 +422,10 @@ export default function App() {
 
   const activeShape = filteredItems.find((item) => item.id === activeShapeId) || filteredItems[0] || null;
   const mobileOpenShape = filteredItems.find((item) => item.id === mobileOpenId) || null;
+  const activeShapeSection = activeShape ? sectionByItemId.get(activeShape.id) || activeSection : activeSection;
+  const mobileOpenShapeSection = mobileOpenShape
+    ? sectionByItemId.get(mobileOpenShape.id) || activeSection
+    : activeSection;
 
   const totalShapes = formulaSections.reduce((acc, section) => acc + section.items.length, 0);
 
@@ -332,23 +497,55 @@ export default function App() {
           )}
         </View>
 
-        <View style={styles.tabBar}>
-          {formulaSections.map((section) => {
-            const isActive = activeSection.id === section.id;
-            return (
-              <Pressable
-                key={section.id}
-                onPress={() => setActiveSectionId(section.id)}
-                style={[
-                  styles.tabButton,
-                  isActive && { backgroundColor: section.theme.primary, borderColor: section.theme.primary },
-                ]}
-              >
-                <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{section.title}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
+        {isPhone ? (
+          <View style={styles.tabBar}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.tabScrollContent}
+            >
+              {sectionsWithBookmarks.map((section) => {
+                const isActive = activeSection.id === section.id;
+                return (
+                  <Pressable
+                    key={section.id}
+                    onPress={() => setActiveSectionId(section.id)}
+                    style={[
+                      styles.tabButton,
+                      styles.tabButtonPhone,
+                      isActive && { backgroundColor: section.theme.primary, borderColor: section.theme.primary },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.tabText, styles.tabTextPhone, isActive && styles.tabTextActive]}
+                      numberOfLines={1}
+                    >
+                      {section.title}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : (
+          <View style={styles.tabBar}>
+            {sectionsWithBookmarks.map((section) => {
+              const isActive = activeSection.id === section.id;
+              return (
+                <Pressable
+                  key={section.id}
+                  onPress={() => setActiveSectionId(section.id)}
+                  style={[
+                    styles.tabButton,
+                    isActive && { backgroundColor: section.theme.primary, borderColor: section.theme.primary },
+                  ]}
+                >
+                  <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{section.title}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
 
         <View style={[styles.contentArea, !isPhone && isWide && styles.contentAreaWide]}>
           <View style={[styles.selectorCard, isWide && styles.selectorCardWide, isPhone && styles.selectorCardPhone]}>
@@ -360,6 +557,9 @@ export default function App() {
             <View style={styles.shapeList}>
               {filteredItems.map((item) => {
                 const isSelected = isPhone ? item.id === mobileOpenId : item.id === activeShape?.id;
+                const isBookmarked = bookmarkedShapeIds.includes(item.id);
+                const itemSection = sectionByItemId.get(item.id) || activeSection;
+                const selectedTheme = activeSection.id === BOOKMARK_SECTION_ID ? itemSection.theme : activeSection.theme;
                 return (
                   <Pressable
                     key={item.id}
@@ -373,28 +573,35 @@ export default function App() {
                     style={[
                       styles.shapeButton,
                       isSelected && {
-                        backgroundColor: activeSection.theme.soft,
-                        borderColor: activeSection.theme.primary,
+                        backgroundColor: selectedTheme.soft,
+                        borderColor: selectedTheme.primary,
                       },
                     ]}
                   >
                     <View style={styles.shapeRow}>
                       <ShapeIllustration
                         shapeId={item.id}
-                        tintColor={activeSection.theme.primary}
+                        tintColor={itemSection.theme.primary}
                         locale={locale}
                         compact
                         style={styles.shapePreview}
                       />
                       <View style={styles.shapeTextBlock}>
-                        <Text style={[styles.shapeName, isSelected && { color: activeSection.theme.primary }]}>
-                          {item.name}
-                        </Text>
+                        <View style={styles.shapeNameRow}>
+                          <Text style={[styles.shapeName, isSelected && { color: selectedTheme.primary }]}>
+                            {item.name}
+                          </Text>
+                          {isBookmarked && (
+                            <Text style={[styles.shapeBookmarkBadge, { color: itemSection.theme.primary }]}>
+                              ★
+                            </Text>
+                          )}
+                        </View>
                         <Text style={styles.shapeTagline} numberOfLines={1}>
                           {item.tagline}
                         </Text>
                         {isPhone && (
-                          <Text style={[styles.shapeTapHint, isSelected && { color: activeSection.theme.primary }]}>
+                          <Text style={[styles.shapeTapHint, isSelected && { color: selectedTheme.primary }]}>
                             {copy.viewFormula}
                           </Text>
                         )}
@@ -416,7 +623,13 @@ export default function App() {
           {!isPhone && (
             <Animated.View style={[styles.detailPanel, { opacity: fadeAnim }]}>
               {activeShape ? (
-                <FormulaCard item={activeShape} section={activeSection} locale={locale} />
+                <FormulaCard
+                  item={activeShape}
+                  section={activeShapeSection}
+                  locale={locale}
+                  isBookmarked={bookmarkedShapeIds.includes(activeShape.id)}
+                  onToggleBookmark={toggleBookmark}
+                />
               ) : (
                 <View style={styles.emptyCard}>
                   <Text style={styles.emptyTitle}>{copy.emptyTitle}</Text>
@@ -447,8 +660,10 @@ export default function App() {
           <ScrollView contentContainerStyle={styles.mobileOverlayContent}>
             <FormulaCard
               item={mobileOpenShape}
-              section={activeSection}
+              section={mobileOpenShapeSection}
               locale={locale}
+              isBookmarked={bookmarkedShapeIds.includes(mobileOpenShape.id)}
+              onToggleBookmark={toggleBookmark}
               mobileMode
               onBack={closeMobileDetail}
             />
@@ -601,6 +816,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 6,
   },
+  tabScrollContent: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingRight: 2,
+  },
   tabButton: {
     flex: 1,
     borderRadius: 12,
@@ -611,11 +831,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 11,
   },
+  tabButtonPhone: {
+    flex: 0,
+    minWidth: 122,
+    paddingHorizontal: 14,
+  },
   tabText: {
     color: '#334155',
     fontSize: 14,
     fontWeight: '700',
     fontFamily: FONT_UI,
+  },
+  tabTextPhone: {
+    fontSize: 13,
   },
   tabTextActive: {
     color: '#ffffff',
@@ -730,11 +958,22 @@ const styles = StyleSheet.create({
   shapeTextBlock: {
     flex: 1,
   },
+  shapeNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   shapeName: {
     color: '#0f172a',
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 3,
+    fontFamily: FONT_UI,
+  },
+  shapeBookmarkBadge: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: -1,
     fontFamily: FONT_UI,
   },
   shapeTagline: {
