@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Rumus Matematika SD",
+    "slug": "rumus-sd-web",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}
