@@ -342,11 +342,15 @@ export const formulaSections = [
       {
         id: 'konversi-satuan',
         name: 'Konversi Satuan Panjang',
-        tagline: 'Mengubah nilai antar km, hm, dam, m, dm, cm, dan mm.',
+        tagline: 'Mengubah nilai antar satuan metrik dan non-metrik panjang.',
         formulas: [
           { label: 'Tangga Satuan', value: 'km - hm - dam - m - dm - cm - mm' },
           { label: 'Turun 1 Anak Tangga', value: 'x 10' },
           { label: 'Naik 1 Anak Tangga', value: ': 10' },
+          { label: 'Konversi Inci', value: '1 inci = 2,54 cm' },
+          { label: 'Konversi Kaki', value: '1 kaki = 12 inci = 0,3048 m' },
+          { label: 'Konversi Yard', value: '1 yard = 3 kaki = 0,9144 m' },
+          { label: 'Konversi Mil', value: '1 mil = 1760 yard = 1,609344 km' },
         ],
         variables: [
           'km = kilometer',
@@ -356,6 +360,10 @@ export const formulaSections = [
           'dm = desimeter',
           'cm = sentimeter',
           'mm = milimeter',
+          'inci = in',
+          'kaki = ft',
+          'yard = yd',
+          'mil = mi',
         ],
       },
       {

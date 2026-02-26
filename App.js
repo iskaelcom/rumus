@@ -17,6 +17,8 @@ import FormulaCard from './components/FormulaCard';
 import ShapeIllustration from './components/ShapeIllustration';
 import { formulaSections } from './data/formulas';
 
+const STORAGE_KEY = 'rumus:last-selection:v1';
+
 const matchesSearchKeyword = (item, keyword) => {
   return item.name.toLowerCase().includes(keyword);
 };
@@ -35,6 +37,7 @@ export default function App() {
   const [activeSectionId, setActiveSectionId] = useState(formulaSections[0].id);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpenId, setMobileOpenId] = useState(null);
+  const [isStorageHydrated, setIsStorageHydrated] = useState(Platform.OS !== 'web');
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const mobileDetailAnim = useRef(new Animated.Value(0)).current;
 
@@ -59,6 +62,52 @@ export default function App() {
     document.head.appendChild(fontLink);
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') {
+      setIsStorageHydrated(true);
+      return;
+    }
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      const storedSection = formulaSections.find((section) => section.id === parsed.activeSectionId);
+      if (!storedSection) {
+        return;
+      }
+      const storedShape = storedSection.items.find((item) => item.id === parsed.activeShapeId);
+      setActiveSectionId(storedSection.id);
+      setActiveShapeId(storedShape ? storedShape.id : storedSection.items[0].id);
+      if (storedShape && parsed.mobileOpenId === storedShape.id) {
+        setMobileOpenId(storedShape.id);
+      }
+    } catch (error) {
+      // Ignore broken localStorage payload and continue with defaults.
+    } finally {
+      setIsStorageHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isStorageHydrated || Platform.OS !== 'web' || typeof window === 'undefined') {
+      return;
+    }
+    try {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          activeSectionId,
+          activeShapeId,
+          mobileOpenId,
+        })
+      );
+    } catch (error) {
+      // Ignore storage quota or privacy mode errors.
+    }
+  }, [isStorageHydrated, activeSectionId, activeShapeId, mobileOpenId]);
+
   const openMobileDetail = (itemId) => {
     setActiveShapeId(itemId);
     setMobileOpenId(itemId);
@@ -74,11 +123,6 @@ export default function App() {
       setMobileOpenId(null);
     });
   };
-
-  useEffect(() => {
-    setActiveShapeId(activeSection.items[0].id);
-    setMobileOpenId(null);
-  }, [activeSection]);
 
   const keyword = searchQuery.trim().toLowerCase();
 

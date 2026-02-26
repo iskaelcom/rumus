@@ -11,6 +11,10 @@ const LENGTH_TO_METER = {
   dm: 0.1,
   cm: 0.01,
   mm: 0.001,
+  inci: 0.0254,
+  kaki: 0.3048,
+  yard: 0.9144,
+  mil: 1609.344,
 };
 const LENGTH_KEYS = Object.keys(LENGTH_TO_METER);
 
@@ -143,6 +147,10 @@ const CALCULATOR_FIELDS = {
     { key: 'dm', label: 'dm' },
     { key: 'cm', label: 'cm' },
     { key: 'mm', label: 'mm' },
+    { key: 'inci', label: 'inci (in)' },
+    { key: 'kaki', label: 'kaki (ft)' },
+    { key: 'yard', label: 'yard (yd)' },
+    { key: 'mil', label: 'mil (mi)' },
   ],
   debit: [
     { key: 'debit', label: 'Debit' },
