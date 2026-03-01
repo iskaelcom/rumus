@@ -84,7 +84,7 @@ export default function FormulaCard({
 
       <View style={styles.formulaGroup}>
         {item.formulas.map((formula) => (
-          <View key={formula.label} style={styles.formulaRow}>
+          <View key={formula.label} style={[styles.formulaRow, { borderLeftColor: section.theme.primary }]}>
             <Text style={styles.formulaLabel}>{formula.label}</Text>
             <Text style={styles.formulaValue}>
               {renderSubscriptText(formula.value, styles.subscriptText)}
@@ -99,8 +99,8 @@ export default function FormulaCard({
       <Text style={styles.variablesTitle}>{copy.variables}</Text>
       <View style={styles.variableWrap}>
         {item.variables.map((variable) => (
-          <View key={variable} style={styles.variableChip}>
-            <Text style={styles.variableText}>
+          <View key={variable} style={[styles.variableChip, { backgroundColor: section.theme.soft, borderColor: section.theme.primary }]}>
+            <Text style={[styles.variableText, { color: section.theme.primary }]}>
               {renderSubscriptText(variable, styles.subscriptText)}
             </Text>
           </View>
@@ -113,62 +113,62 @@ export default function FormulaCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
+    borderRadius: 16,
+    padding: 22,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    shadowColor: '#0f172a',
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 3,
+    borderColor: '#DDE5F8',
+    shadowColor: '#312E81',
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   mobileHead: {
-    marginBottom: 10,
+    marginBottom: 12,
   },
   mobileBackButton: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#cbd5e1',
-    backgroundColor: '#f8fafc',
+    borderColor: '#DDE5F8',
+    backgroundColor: '#F5F7FC',
     borderRadius: 999,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   mobileBackText: {
-    color: '#334155',
+    color: '#475569',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     fontFamily: FONT_UI,
   },
   badge: {
     alignSelf: 'flex-start',
     borderRadius: 999,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 5,
     marginBottom: 12,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 0.4,
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     fontFamily: FONT_UI,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '700',
     color: '#0f172a',
     marginBottom: 10,
     fontFamily: FONT_UI,
   },
   sectionText: {
-    fontSize: 12,
+    fontSize: 11,
     textTransform: 'uppercase',
-    letterSpacing: 0.4,
+    letterSpacing: 0.6,
     fontWeight: '700',
-    marginTop: -4,
+    marginBottom: 2,
     fontFamily: FONT_UI,
   },
   bookmarkButton: {
@@ -177,54 +177,51 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   bookmarkButtonText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     fontFamily: FONT_UI,
   },
   tagline: {
-    fontSize: 15,
-    color: '#334155',
-    marginBottom: 18,
+    fontSize: 14,
+    color: '#475569',
+    marginBottom: 16,
     lineHeight: 22,
     fontFamily: FONT_UI,
   },
   illustrationTitle: {
-    fontSize: 13,
-    color: '#64748b',
-    letterSpacing: 0.4,
+    fontSize: 11,
+    color: '#94a3b8',
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     fontWeight: '700',
     marginBottom: 8,
     fontFamily: FONT_UI,
   },
   formulaGroup: {
-    borderRadius: 14,
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    padding: 12,
-    gap: 10,
+    marginTop: 8,
+    gap: 8,
   },
   formulaRow: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    borderRadius: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#e2e8f0',
     padding: 12,
+    paddingLeft: 14,
   },
   formulaLabel: {
-    fontSize: 12,
-    letterSpacing: 0.5,
+    fontSize: 11,
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     color: '#64748b',
     marginBottom: 4,
     fontFamily: FONT_UI,
   },
   formulaValue: {
-    fontSize: 20,
+    fontSize: 22,
     color: '#0f172a',
     fontWeight: '700',
     fontFamily: FONT_UI,
@@ -235,21 +232,21 @@ const styles = StyleSheet.create({
     transform: [{ translateY: 2 }],
   },
   calculatorTitle: {
-    marginTop: 16,
-    marginBottom: 2,
-    fontSize: 13,
-    color: '#64748b',
-    letterSpacing: 0.4,
+    marginTop: 20,
+    marginBottom: 4,
+    fontSize: 11,
+    color: '#94a3b8',
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     fontWeight: '700',
     fontFamily: FONT_UI,
   },
   variablesTitle: {
-    marginTop: 16,
+    marginTop: 20,
     marginBottom: 8,
-    fontSize: 13,
-    color: '#64748b',
-    letterSpacing: 0.4,
+    fontSize: 11,
+    color: '#94a3b8',
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     fontWeight: '700',
     fontFamily: FONT_UI,
@@ -260,16 +257,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   variableChip: {
-    backgroundColor: '#eef2ff',
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: '#dbeafe',
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
   },
   variableText: {
-    fontSize: 13,
-    color: '#1e3a8a',
+    fontSize: 12,
     fontFamily: FONT_UI,
   },
 });
