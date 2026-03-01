@@ -227,37 +227,84 @@ const buildSvg = (shapeId, stroke, copy) => {
     `,
     'konversi-satuan': `
       <defs>
-        <marker id='arrow-down' markerWidth='8' markerHeight='8' refX='7' refY='4' orient='auto' markerUnits='strokeWidth'>
-          <path d='M 0 0 L 8 4 L 0 8 z' fill='${helperStroke}' />
+        <marker id='ks-arr-dn' markerWidth='7' markerHeight='7' refX='3.5' refY='3.5' orient='auto' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 4 3.5 L 0 7 z' fill='${helperStroke}' />
         </marker>
-        <marker id='arrow-up' markerWidth='8' markerHeight='8' refX='7' refY='4' orient='auto' markerUnits='strokeWidth'>
-          <path d='M 0 0 L 8 4 L 0 8 z' fill='${helperStroke}' />
+        <marker id='ks-arr-up' markerWidth='7' markerHeight='7' refX='3.5' refY='3.5' orient='auto-start-reverse' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 4 3.5 L 0 7 z' fill='${helperStroke}' />
         </marker>
       </defs>
-      <line x1='108' y1='28' x2='194' y2='61' stroke='${helperStroke}' stroke-width='2' stroke-linecap='round' marker-end='url(#arrow-down)' />
-      <text x='200' y='54' fill='${labelFill}' font-size='11' font-weight='700'>x10</text>
-      <line x1='212' y1='156' x2='114' y2='118' stroke='${helperStroke}' stroke-width='2' stroke-linecap='round' marker-end='url(#arrow-up)' />
-      <text x='84' y='148' fill='${labelFill}' font-size='11' font-weight='700'>:10</text>
-      <rect x='36' y='36' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='72' y='50' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='108' y='64' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='144' y='78' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='180' y='92' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='216' y='106' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <rect x='252' y='120' width='32' height='22' rx='6' fill='#ffffff' stroke='${stroke}' stroke-width='1.8' />
-      <text x='52' y='51' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>km</text>
-      <text x='88' y='65' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>hm</text>
-      <text x='124' y='79' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dam</text>
-      <text x='160' y='93' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>m</text>
-      <text x='196' y='107' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dm</text>
-      <text x='232' y='121' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>cm</text>
-      <text x='268' y='135' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>mm</text>
+      <!-- Staircase polygon (top-left stair → bottom-right, closed) -->
+      <polygon
+        points='44,14 78,14 78,34 112,34 112,54 146,54 146,74 180,74 180,94 214,94 214,114 248,114 248,134 282,134 282,154 44,154'
+        fill='${stroke}' fill-opacity='0.1'
+        stroke='${stroke}' stroke-width='2.4' stroke-linejoin='round'
+      />
+      <!-- Step labels centered in each tread (plateau 34×20px, baseline = top+14) -->
+      <text x='61' y='28' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>km</text>
+      <text x='95' y='48' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>hm</text>
+      <text x='129' y='68' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>dam</text>
+      <text x='163' y='88' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>m</text>
+      <text x='197' y='108' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>dm</text>
+      <text x='231' y='128' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>cm</text>
+      <text x='265' y='148' fill='${labelFill}' text-anchor='middle' font-size='12' font-weight='700'>mm</text>
+      <!-- ×10 arrow: down on right side -->
+      <line x1='298' y1='26' x2='298' y2='148' stroke='${helperStroke}' stroke-width='1.8' stroke-linecap='round' marker-end='url(#ks-arr-dn)' />
+      <text x='298' y='18' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>×10</text>
+      <!-- ÷10 arrow: up on left side -->
+      <line x1='28' y1='148' x2='28' y2='26' stroke='${helperStroke}' stroke-width='1.8' stroke-linecap='round' marker-end='url(#ks-arr-up)' />
+      <text x='28' y='166' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>÷10</text>
     `,
     debit: `
-      <rect x='58' y='38' width='204' height='104' rx='16' fill='#ffffff' stroke='${stroke}' stroke-width='2.8' />
-      <text x='160' y='76' fill='${labelFill}' text-anchor='middle' font-size='24' font-weight='700'>Q = V / t</text>
-      <text x='160' y='106' fill='${labelFill}' text-anchor='middle' font-size='18' font-weight='700'>V = Q x t</text>
-      <text x='160' y='132' fill='${labelFill}' text-anchor='middle' font-size='18' font-weight='700'>t = V / Q</text>
+      <defs>
+        <marker id='fa' markerWidth='7' markerHeight='6' refX='6' refY='3' orient='auto' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 7 3 L 0 6 z' fill='${stroke}' />
+        </marker>
+      </defs>
+
+      <!-- Pipe body -->
+      <rect x='22' y='66' width='88' height='48' rx='10' fill='none' stroke='${stroke}' stroke-width='2.8' />
+      <!-- Pipe inlet cap -->
+      <ellipse cx='23' cy='90' rx='5' ry='21' fill='none' stroke='${stroke}' stroke-width='1.8' />
+
+      <!-- Water ripple lines inside pipe -->
+      <path d='M 46 78 Q 57 86 68 78 Q 79 70 90 78 Q 101 86 110 78' fill='none' stroke='${stroke}' stroke-width='1.8' opacity='0.4' stroke-linecap='round' />
+      <path d='M 46 100 Q 57 108 68 100 Q 79 92 90 100 Q 101 108 110 100' fill='none' stroke='${stroke}' stroke-width='1.8' opacity='0.4' stroke-linecap='round' />
+
+      <!-- Pipe right opening -->
+      <line x1='110' y1='66' x2='110' y2='114' stroke='${stroke}' stroke-width='2.2' />
+
+      <!-- Flow arrows (3 lines: thin-thick-thin) -->
+      <line x1='112' y1='78' x2='157' y2='78' stroke='${stroke}' stroke-width='1.6' marker-end='url(#fa)' />
+      <line x1='112' y1='90' x2='161' y2='90' stroke='${stroke}' stroke-width='2.8' marker-end='url(#fa)' />
+      <line x1='112' y1='102' x2='157' y2='102' stroke='${stroke}' stroke-width='1.6' marker-end='url(#fa)' />
+
+      <!-- Q label above flow -->
+      <text x='136' y='61' fill='${labelFill}' text-anchor='middle' font-size='14' font-weight='700'>Q</text>
+      <line x1='136' y1='63' x2='136' y2='73' stroke='${helperStroke}' stroke-width='1.2' />
+
+      <!-- Tank / container -->
+      <rect x='170' y='32' width='116' height='122' rx='10' fill='none' stroke='${stroke}' stroke-width='2.8' />
+
+      <!-- Water fill (bottom ~42% of tank) -->
+      <rect x='172' y='103' width='112' height='49' fill='${stroke}' opacity='0.14' />
+
+      <!-- Water surface wave -->
+      <path d='M 172 103 Q 194 98 216 103 Q 238 108 260 103 Q 278 98 282 103' fill='none' stroke='${stroke}' stroke-width='2' opacity='0.55' />
+
+      <!-- V label in upper part of tank -->
+      <text x='228' y='84' fill='${labelFill}' text-anchor='middle' font-size='28' font-weight='700'>V</text>
+
+      <!-- Volume measurement ticks on left wall of tank -->
+      <line x1='170' y1='103' x2='162' y2='103' stroke='${helperStroke}' stroke-width='1.5' />
+      <line x1='170' y1='152' x2='162' y2='152' stroke='${helperStroke}' stroke-width='1.5' />
+      <line x1='166' y1='103' x2='166' y2='152' stroke='${helperStroke}' stroke-width='1.5' />
+
+      <!-- t label: dashed bracket on right side of tank -->
+      <line x1='290' y1='32' x2='290' y2='154' stroke='${helperStroke}' stroke-width='1.6' stroke-dasharray='5 4' />
+      <line x1='285' y1='32' x2='290' y2='32' stroke='${helperStroke}' stroke-width='1.4' />
+      <line x1='285' y1='154' x2='290' y2='154' stroke='${helperStroke}' stroke-width='1.4' />
+      <text x='301' y='97' fill='${labelFill}' font-size='16' font-weight='700'>t</text>
     `,
     kubus: `
       <rect x='92' y='64' width='84' height='84' fill='none' stroke='${stroke}' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' />
@@ -367,9 +414,9 @@ export default function ShapeIllustration({ shapeId, tintColor, locale = 'id', c
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderRadius: 16,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#dbe1eb',
+    borderColor: '#DDE5F8',
     backgroundColor: 'transparent',
     overflow: 'hidden',
     marginBottom: 16,
