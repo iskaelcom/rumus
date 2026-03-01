@@ -18,6 +18,34 @@ const LENGTH_TO_METER = {
 };
 const LENGTH_KEYS = Object.keys(LENGTH_TO_METER);
 
+const WEIGHT_TO_GRAM = {
+  ton: 1000000,
+  kwintal: 100000,
+  kg: 1000,
+  hg: 100,
+  dag: 10,
+  g: 1,
+  dg: 0.1,
+  cg: 0.01,
+  mg: 0.001,
+  oz: 28.3495,
+  lb: 453.592,
+};
+const WEIGHT_KEYS = Object.keys(WEIGHT_TO_GRAM);
+
+const TIME_TO_SECOND = {
+  abad: 3153600000,
+  dekade: 315360000,
+  tahun: 31536000,
+  bulan: 2628000,
+  minggu: 604800,
+  hari: 86400,
+  jam: 3600,
+  menit: 60,
+  detik: 1,
+};
+const TIME_KEYS = Object.keys(TIME_TO_SECOND);
+
 const FONT_UI = Platform.select({
   web: 'Geist',
   ios: 'System',
@@ -162,6 +190,30 @@ const CALCULATOR_FIELDS = {
     { key: 'kaki', label: 'kaki (ft)' },
     { key: 'yard', label: 'yard (yd)' },
     { key: 'mil', label: 'mil (mi)' },
+  ],
+  'konversi-berat': [
+    { key: 'ton', label: 'ton' },
+    { key: 'kwintal', label: 'kwintal' },
+    { key: 'kg', label: 'kg' },
+    { key: 'hg', label: 'hg (ons)' },
+    { key: 'dag', label: 'dag' },
+    { key: 'g', label: 'g' },
+    { key: 'dg', label: 'dg' },
+    { key: 'cg', label: 'cg' },
+    { key: 'mg', label: 'mg' },
+    { key: 'oz', label: 'oz (Amerika)' },
+    { key: 'lb', label: 'lb (Amerika)' },
+  ],
+  'konversi-waktu': [
+    { key: 'abad', label: 'abad' },
+    { key: 'dekade', label: 'dekade' },
+    { key: 'tahun', label: 'tahun' },
+    { key: 'bulan', label: 'bulan' },
+    { key: 'minggu', label: 'minggu' },
+    { key: 'hari', label: 'hari' },
+    { key: 'jam', label: 'jam' },
+    { key: 'menit', label: 'menit' },
+    { key: 'detik', label: 'detik' },
   ],
   debit: [
     { key: 'debit', label: 'Debit' },
@@ -323,6 +375,23 @@ const FIELD_LABEL_OVERRIDES_EN = {
     inci: 'inch (in)',
     kaki: 'foot (ft)',
     mil: 'mile (mi)',
+  },
+  'konversi-berat': {
+    kwintal: 'quintal',
+    hg: 'hg (metric ounce)',
+    oz: 'oz (US ounce)',
+    lb: 'lb (US pound)',
+  },
+  'konversi-waktu': {
+    abad: 'century',
+    dekade: 'decade',
+    tahun: 'year',
+    bulan: 'month',
+    minggu: 'week',
+    hari: 'day',
+    jam: 'hour',
+    menit: 'minute',
+    detik: 'second',
   },
   debit: {
     debit: 'Flow rate',
@@ -756,6 +825,36 @@ const solveShapeValues = (shapeId, seedValues, preferredKey = null) => {
         }
         break;
       }
+      case 'konversi-berat': {
+        const sourceUnit =
+          (preferredKey && WEIGHT_KEYS.includes(preferredKey) && has(preferredKey) && preferredKey) ||
+          WEIGHT_KEYS.find((unitKey) => has(unitKey));
+        if (sourceUnit) {
+          const valueInGram = values[sourceUnit] * WEIGHT_TO_GRAM[sourceUnit];
+          WEIGHT_KEYS.forEach((unitKey) => {
+            if (unitKey === sourceUnit) {
+              return;
+            }
+            set(unitKey, valueInGram / WEIGHT_TO_GRAM[unitKey]);
+          });
+        }
+        break;
+      }
+      case 'konversi-waktu': {
+        const sourceUnit =
+          (preferredKey && TIME_KEYS.includes(preferredKey) && has(preferredKey) && preferredKey) ||
+          TIME_KEYS.find((unitKey) => has(unitKey));
+        if (sourceUnit) {
+          const valueInSecond = values[sourceUnit] * TIME_TO_SECOND[sourceUnit];
+          TIME_KEYS.forEach((unitKey) => {
+            if (unitKey === sourceUnit) {
+              return;
+            }
+            set(unitKey, valueInSecond / TIME_TO_SECOND[unitKey]);
+          });
+        }
+        break;
+      }
       case 'debit': {
         if (has('volume') && has('waktu') && values.waktu > 0) {
           set('debit', values.volume / values.waktu);
@@ -1000,7 +1099,7 @@ export default function ShapeCalculator({ shapeId, accentColor, locale = 'id' })
       const nextValues = { ...prevState.values, [key]: cleaned };
       const nextManual = { ...prevState.manual };
 
-      if (shapeId === 'konversi-satuan') {
+      if (shapeId === 'konversi-satuan' || shapeId === 'konversi-berat' || shapeId === 'konversi-waktu') {
         if (cleaned.trim() === '') {
           delete nextManual[key];
         } else {

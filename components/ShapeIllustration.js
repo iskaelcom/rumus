@@ -255,6 +255,84 @@ const buildSvg = (shapeId, stroke, copy) => {
       <line x1='28' y1='148' x2='28' y2='26' stroke='${helperStroke}' stroke-width='1.8' stroke-linecap='round' marker-end='url(#ks-arr-up)' />
       <text x='28' y='166' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>÷10</text>
     `,
+    'konversi-berat': `
+      <defs>
+        <marker id='kb-arr-dn' markerWidth='7' markerHeight='7' refX='3.5' refY='3.5' orient='auto' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 4 3.5 L 0 7 z' fill='${helperStroke}' />
+        </marker>
+        <marker id='kb-arr-up' markerWidth='7' markerHeight='7' refX='3.5' refY='3.5' orient='auto-start-reverse' markerUnits='strokeWidth'>
+          <path d='M 0 0 L 4 3.5 L 0 7 z' fill='${helperStroke}' />
+        </marker>
+      </defs>
+      <!-- Metric staircase (7 steps kg→mg, W=22, H=20, start x=14, y=14) -->
+      <polygon
+        points='14,14 36,14 36,34 58,34 58,54 80,54 80,74 102,74 102,94 124,94 124,114 146,114 146,134 168,134 168,154 14,154'
+        fill='${stroke}' fill-opacity='0.1'
+        stroke='${stroke}' stroke-width='2.2' stroke-linejoin='round'
+      />
+      <!-- Step labels (center x = step_left+11, y = step_top+14) -->
+      <text x='25' y='28' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>kg</text>
+      <text x='47' y='48' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>hg</text>
+      <text x='69' y='68' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dag</text>
+      <text x='91' y='88' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>g</text>
+      <text x='113' y='108' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>dg</text>
+      <text x='135' y='128' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>cg</text>
+      <text x='157' y='148' fill='${labelFill}' text-anchor='middle' font-size='9.5' font-weight='700'>mg</text>
+      <!-- ×10 arrow down (right side of metric staircase) -->
+      <line x1='178' y1='22' x2='178' y2='146' stroke='${helperStroke}' stroke-width='1.8' stroke-linecap='round' marker-end='url(#kb-arr-dn)' />
+      <text x='178' y='15' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>×10</text>
+      <!-- ÷10 arrow up (left side) -->
+      <line x1='7' y1='146' x2='7' y2='22' stroke='${helperStroke}' stroke-width='1.8' stroke-linecap='round' marker-end='url(#kb-arr-up)' />
+      <text x='7' y='163' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>÷10</text>
+      <!-- Divider between metric and US panels -->
+      <line x1='188' y1='8' x2='188' y2='170' stroke='#e2e8f0' stroke-width='1' stroke-dasharray='4 3' />
+      <!-- US System header -->
+      <text x='253' y='22' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>Sistem Amerika</text>
+      <!-- US ton box -->
+      <rect x='193' y='28' width='120' height='36' rx='6' fill='${stroke}' fill-opacity='0.08' stroke='${stroke}' stroke-width='1.8' />
+      <text x='253' y='46' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>ton (US)</text>
+      <text x='253' y='59' fill='${helperStroke}' text-anchor='middle' font-size='9'>1 ton = 2.000 lb</text>
+      <!-- Arrow ton→lb -->
+      <line x1='253' y1='64' x2='253' y2='78' stroke='${helperStroke}' stroke-width='1.6' stroke-linecap='round' marker-end='url(#kb-arr-dn)' />
+      <text x='264' y='74' fill='${labelFill}' font-size='9' font-weight='700'>×2.000</text>
+      <!-- US lb box -->
+      <rect x='193' y='82' width='120' height='36' rx='6' fill='${stroke}' fill-opacity='0.08' stroke='${stroke}' stroke-width='1.8' />
+      <text x='253' y='100' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>lb (pound)</text>
+      <text x='253' y='113' fill='${helperStroke}' text-anchor='middle' font-size='9'>1 lb = 16 oz</text>
+      <!-- Arrow lb→oz -->
+      <line x1='253' y1='118' x2='253' y2='132' stroke='${helperStroke}' stroke-width='1.6' stroke-linecap='round' marker-end='url(#kb-arr-dn)' />
+      <text x='264' y='128' fill='${labelFill}' font-size='9' font-weight='700'>×16</text>
+      <!-- US oz box -->
+      <rect x='193' y='136' width='120' height='36' rx='6' fill='${stroke}' fill-opacity='0.08' stroke='${stroke}' stroke-width='1.8' />
+      <text x='253' y='154' fill='${labelFill}' text-anchor='middle' font-size='11' font-weight='700'>oz (ounce)</text>
+      <text x='253' y='166' fill='${helperStroke}' text-anchor='middle' font-size='9'>1 oz = 28,35 g</text>
+    `,
+    'konversi-waktu': `
+      <!-- Staircase polygon (7 steps: tahun→detik, same geometry as konversi-satuan) -->
+      <polygon
+        points='44,14 78,14 78,34 112,34 112,54 146,54 146,74 180,74 180,94 214,94 214,114 248,114 248,134 282,134 282,154 44,154'
+        fill='${stroke}' fill-opacity='0.1'
+        stroke='${stroke}' stroke-width='2.4' stroke-linejoin='round'
+      />
+      <!-- Step labels (font 10 to fit longer words like "minggu", "menit") -->
+      <text x='61' y='27' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>tahun</text>
+      <text x='95' y='47' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>bulan</text>
+      <text x='129' y='67' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>minggu</text>
+      <text x='163' y='87' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>hari</text>
+      <text x='197' y='107' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>jam</text>
+      <text x='231' y='127' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>menit</text>
+      <text x='265' y='147' fill='${labelFill}' text-anchor='middle' font-size='10' font-weight='700'>detik</text>
+      <!-- Per-step conversion factor labels on each riser gap -->
+      <text x='81' y='30' fill='${helperStroke}' font-size='8.5' font-weight='700'>×12</text>
+      <text x='115' y='50' fill='${helperStroke}' font-size='8.5' font-weight='700'>×4</text>
+      <text x='149' y='70' fill='${helperStroke}' font-size='8.5' font-weight='700'>×7</text>
+      <text x='183' y='90' fill='${helperStroke}' font-size='8.5' font-weight='700'>×24</text>
+      <text x='217' y='110' fill='${helperStroke}' font-size='8.5' font-weight='700'>×60</text>
+      <text x='251' y='130' fill='${helperStroke}' font-size='8.5' font-weight='700'>×60</text>
+      <!-- Legend note top-right -->
+      <text x='308' y='22' fill='${helperStroke}' text-anchor='end' font-size='9' font-weight='700'>↓ kalikan</text>
+      <text x='308' y='34' fill='${helperStroke}' text-anchor='end' font-size='9' font-weight='700'>↑ bagi</text>
+    `,
     debit: `
       <defs>
         <marker id='fa' markerWidth='7' markerHeight='6' refX='6' refY='3' orient='auto' markerUnits='strokeWidth'>
